@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>鯨・啟</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+/* ── THEME VARIABLES ── */
+:root{
+  --bg:#0B182B; --bg2:#0d1e36; --bg3:#152848;
+  --tx1:#e8f4fd; --tx2:#a0c8f0; --tx3:#5a88b8;
+  --bdr:rgba(160,200,240,0.18); --bdr2:rgba(160,200,240,0.09);
+  --cbg:rgba(13,30,54,0.72); --chov:rgba(21,40,72,0.60);
+  --gold:#c9a84c; --gold2:#e4c97a;
+  --acc:#4fa3d4; --danger:#e06050;
+  --serif:'Noto Serif TC','Songti SC',serif;
+  --sans:'Noto Sans TC',sans-serif;
+  --tab-h:64px; --hdr-h:60px;
+}
+/* ── Pale Blue ── */
+.th-lb{
+  --bg:#B9CBE1; --bg2:#a8bcce; --bg3:#96aabf;
+  --tx1:#0d1e2e; --tx2:#2a4a6a; --tx3:#4a6a88;
+  --bdr:rgba(30,60,100,0.18); --bdr2:rgba(30,60,100,0.09);
+  --cbg:rgba(255,255,255,0.55); --chov:rgba(200,218,234,0.75);
+  --gold:#7a5010; --gold2:#9a7020; --acc:#2060a0;
+}
+/* ── Beige ── */
+.th-be{
+  --bg:#EDE6D6; --bg2:#e0d8c5; --bg3:#d0c8b0;
+  --tx1:#2a2018; --tx2:#504030; --tx3:#807060;
+  --bdr:rgba(80,60,40,0.18); --bdr2:rgba(80,60,40,0.09);
+  --cbg:rgba(255,252,244,0.80); --chov:rgba(220,212,196,0.80);
+  --gold:#7a5820; --gold2:#a07030; --acc:#5080a0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:var(--serif);background:var(--bg);color:var(--tx1);overflow:hidden;transition:background .4s,color .3s;}
+
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 20% 80%,rgba(0,0,0,0.35) 0%,transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 20%,rgba(0,0,0,0.25) 0%,transparent 70%);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,0.015) 60px,rgba(255,255,255,0.015) 61px);}
+
+/* wave-cv removed */
+
+/* ── APP SHELL ── */
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;max-width:680px;margin:0 auto;}
+
+/* HEADER */
+#hdr{height:var(--hdr-h);display:flex;align-items:center;justify-content:space-between;padding:0 14px;flex-shrink:0;
+  border-bottom:1px solid var(--bdr);background:rgba(0,0,0,0.30);backdrop-filter:blur(14px);position:relative;z-index:10;}
+.hdr-l{display:flex;align-items:center;}
+.hdr-c{text-align:center;flex:1;}
+.hdr-c h1{font-size:1.4rem;font-weight:600;letter-spacing:.22em;color:var(--tx1);line-height:1;}
+.hdr-c h1 em{color:var(--gold);font-style:normal;}
+.hdr-c p{font-size:.56rem;color:var(--tx3);letter-spacing:.14em;margin-top:3px;font-family:var(--sans);}
+.hdr-r{display:flex;justify-content:flex-end;align-items:center;gap:6px;}
+.hdr-btn{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:4px 8px;border-radius:6px;font-size:.57rem;cursor:pointer;font-family:var(--serif);transition:all .2s;white-space:nowrap;}
+.hdr-btn:hover{border-color:var(--gold);color:var(--gold);}
+.ubadge{font-size:.57rem;color:var(--gold);font-family:var(--sans);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.22);padding:4px 8px;border-radius:6px;cursor:pointer;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* CONTENT */
+#content{flex:1;overflow-y:auto;padding:12px 14px;padding-bottom:calc(var(--tab-h) + 24px);}
+#content::-webkit-scrollbar{width:3px;}
+#content::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px;}
+
+/* TABBAR */
+#tabbar{height:var(--tab-h);display:flex;align-items:center;justify-content:space-around;
+  border-top:1px solid var(--bdr);background:rgba(0,0,0,.45);backdrop-filter:blur(14px);
+  flex-shrink:0;position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:680px;z-index:100;padding:0 2px;}
+.tb-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 6px;
+  border:none;background:none;cursor:pointer;color:var(--tx3);transition:color .2s;flex:1;font-family:var(--serif);}
+.tb-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+.tb-btn span{font-size:.54rem;letter-spacing:.03em;white-space:nowrap;}
+.tb-btn.active{color:var(--gold);}
+.tb-btn:hover{color:var(--acc);}
+
+/* CARDS */
+.card{background:var(--cbg);border:1px solid var(--bdr);border-radius:12px;margin-bottom:11px;overflow:hidden;backdrop-filter:blur(8px);}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;cursor:pointer;user-select:none;}
+.card-hdr:hover{background:rgba(255,255,255,.03);}
+.card-hdr h2{display:flex;align-items:center;gap:8px;font-size:.87rem;font-weight:500;color:var(--tx1);letter-spacing:.07em;}
+.card-hdr h2::before{content:'●';font-size:.42rem;color:var(--gold);}
+.ci{color:var(--tx3);font-size:.66rem;transition:transform .3s;}
+.card-body{padding:0 15px 13px;border-top:1px solid var(--bdr2);}
+.card.coll .card-body{display:none;}
+.card.coll .ci{transform:rotate(-90deg);}
+/* Fixed-open cards */
+.card.fixed-open .card-hdr{cursor:default;}
+.card.fixed-open .ci{display:none;}
+
+/* PAGES */
+.page{display:none;}.page.active{display:block;}
+.pg-hdr{padding:7px 0 13px;border-bottom:1px solid var(--bdr2);margin-bottom:13px;}
+.pg-title{font-size:1rem;color:var(--tx1);letter-spacing:.14em;display:flex;align-items:center;gap:8px;}
+.pg-title::before{content:'●';font-size:.42rem;color:var(--gold);}
+.pg-sub{font-size:.58rem;color:var(--tx3);margin-top:3px;font-family:var(--sans);}
+
+/* BUTTONS */
+.btn-p{background:rgba(201,168,76,.10);border:1px solid rgba(201,168,76,.28);color:var(--gold);
+  padding:9px 15px;border-radius:8px;font-size:.72rem;cursor:pointer;font-family:var(--serif);
+  letter-spacing:.1em;transition:background .2s;width:100%;margin-top:8px;}
+.btn-p:hover{background:rgba(201,168,76,.20);}
+.btn-g{background:none;border:1px solid var(--bdr);color:var(--tx2);padding:5px 11px;
+  border-radius:20px;font-size:.66rem;cursor:pointer;font-family:var(--serif);transition:all .2s;}
+.btn-g:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:4px 10px;
+  border-radius:20px;font-size:.59rem;cursor:pointer;font-family:var(--serif);transition:all .2s;}
+.btn-sm:hover{border-color:var(--acc);color:var(--acc);}
+.btn-back{background:none;border:none;color:var(--tx2);cursor:pointer;padding:4px;display:flex;align-items:center;flex-shrink:0;}
+.btn-back svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.btn-icon{background:none;border:none;color:var(--tx3);cursor:pointer;padding:3px;display:flex;align-items:center;transition:color .15s;}
+.btn-icon:hover{color:var(--gold);}
+.btn-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.btn-danger{background:none;border:1px solid rgba(220,80,70,.3);color:#e08070;padding:4px 10px;
+  border-radius:6px;font-size:.62rem;cursor:pointer;font-family:var(--serif);transition:all .2s;}
+.btn-danger:hover{background:rgba(220,80,70,.12);}
+
+/* ITEM ROWS */
+.item-row{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--bdr);
+  border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.025);}
+.item-row:hover{background:var(--chov);border-color:rgba(255,255,255,.18);}
+.item-row-l{flex:1;min-width:0;}
+.item-title{font-size:.82rem;color:var(--tx1);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-meta{font-size:.57rem;color:var(--tx3);margin-top:2px;font-family:var(--sans);}
+.item-arr{color:var(--tx3);font-size:.7rem;flex-shrink:0;}
+.empty-hint{font-size:.72rem;color:var(--tx3);padding:16px 0 4px;text-align:center;line-height:2;font-weight:300;}
+
+/* ── HOME ── */
+.quote-body{padding:13px 0 6px;}
+.quote-zh{font-size:.88rem;line-height:2;color:var(--tx1);font-weight:300;font-style:italic;letter-spacing:.06em;}
+.quote-orig{font-size:.70rem;line-height:1.7;color:var(--tx3);margin-top:6px;font-weight:300;}
+.quote-src{font-size:.62rem;color:var(--gold);letter-spacing:.08em;text-align:right;margin-top:6px;font-family:var(--sans);}
+.wc-mode-row{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
+.wc-btn{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:3px 8px;border-radius:20px;font-size:.57rem;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.wc-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+.stats-top{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px;}
+.stat-today{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);border-radius:8px;padding:13px;text-align:center;}
+.stat-today .lbl{font-size:.58rem;color:var(--tx3);letter-spacing:.1em;font-family:var(--sans);margin-bottom:4px;}
+.stat-today .cnt{font-size:2rem;font-weight:600;color:var(--gold2);line-height:1;font-family:var(--sans);}
+.stat-today .unt{font-size:.58rem;color:var(--tx3);margin-top:3px;font-family:var(--sans);}
+.stat-circ{background:rgba(79,163,212,.07);border:1px solid rgba(79,163,212,.14);border-radius:8px;padding:9px;display:flex;flex-direction:column;align-items:center;}
+.stat-circ .lbl{font-size:.58rem;color:var(--tx3);font-family:var(--sans);margin-bottom:5px;}
+.circ-wrap{position:relative;width:70px;height:70px;}
+.circ-wrap svg{transform:rotate(-90deg);width:70px;height:70px;}
+.c-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:6;}
+.c-fg{fill:none;stroke:var(--acc);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .8s;}
+.circ-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.circ-pct{font-size:.92rem;font-weight:600;color:var(--tx1);font-family:var(--sans);line-height:1;}
+.circ-sub{font-size:.44rem;color:var(--tx3);font-family:var(--sans);}
+.circ-sel{margin-top:4px;background:none;border:none;color:var(--tx3);font-size:.56rem;font-family:var(--serif);cursor:pointer;text-align:center;width:100%;}
+.chart-area{margin-top:13px;}
+.chart-filter{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px;}
+.f-btn{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:3px 8px;border-radius:20px;font-size:.59rem;cursor:pointer;font-family:var(--serif);transition:all .2s;}
+.f-btn.active,.f-btn:hover{border-color:var(--acc);color:var(--acc);}
+.bar-chart{display:flex;align-items:flex-end;gap:3px;height:80px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+.bar{width:100%;background:linear-gradient(to top,rgba(79,163,212,.65),rgba(79,163,212,.2));border-radius:3px 3px 0 0;min-height:2px;cursor:pointer;transition:height .5s;}
+.bar:hover{background:linear-gradient(to top,var(--gold),rgba(201,168,76,.35));}
+.bar-lbl{font-size:.46rem;color:var(--tx3);font-family:var(--sans);white-space:nowrap;}
+.rpt-btn{margin-top:11px;width:100%;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);color:var(--gold);padding:8px;border-radius:8px;font-size:.68rem;cursor:pointer;font-family:var(--serif);letter-spacing:.1em;transition:background .2s;}
+.rpt-btn:hover{background:rgba(201,168,76,.14);}
+
+/* ── WORKS ── */
+.work-cover{width:36px;height:50px;border-radius:3px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.48rem;color:var(--tx3);writing-mode:vertical-rl;overflow:hidden;}
+.work-cover img{width:100%;height:100%;object-fit:cover;border-radius:3px;}
+.work-status{display:inline-flex;align-items:center;padding:1px 7px;border-radius:20px;font-size:.54rem;margin-top:3px;font-family:var(--sans);}
+.ws-serial{background:rgba(79,163,212,.14);color:var(--acc);border:1px solid rgba(79,163,212,.22);}
+.ws-done{background:rgba(80,200,120,.10);color:#6de0a0;border:1px solid rgba(80,200,120,.18);}
+.ws-off{background:rgba(255,255,255,.06);color:var(--tx3);border:1px solid var(--bdr);}
+
+/* TOC overlay */
+.ov-view{display:none;flex-direction:column;position:fixed;top:var(--hdr-h);left:50%;transform:translateX(-50%);width:100%;max-width:680px;background:var(--bg);z-index:40;}
+.ov-view.vis{display:flex;bottom:var(--tab-h);}
+.ov-top{display:flex;align-items:center;padding:9px 13px;gap:9px;border-bottom:1px solid var(--bdr);background:rgba(0,0,0,.35);backdrop-filter:blur(12px);flex-shrink:0;}
+.ov-title{flex:1;font-size:.86rem;color:var(--tx1);letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.toc-scroll{flex:1;overflow-y:auto;padding:11px 13px 80px;}
+.toc-scroll::-webkit-scrollbar{width:3px;}
+.toc-scroll::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px;}
+.toc-add-row{display:flex;gap:7px;margin-bottom:11px;}
+.toc-add-row button{flex:1;}
+.vol-block{margin-bottom:7px;border:1px solid var(--bdr);border-radius:8px;overflow:hidden;}
+.vol-hdr{display:flex;align-items:center;gap:7px;padding:8px 12px;cursor:pointer;background:rgba(201,168,76,.04);user-select:none;transition:background .2s;}
+.vol-hdr:hover{background:rgba(201,168,76,.09);}
+.vol-dot{width:6px;height:6px;border-radius:50%;border:1.5px solid var(--gold);flex-shrink:0;}
+.vol-name{flex:1;font-size:.78rem;color:var(--gold);letter-spacing:.07em;}
+.vol-meta{font-size:.54rem;color:var(--tx3);font-family:var(--sans);}
+.vol-chev{color:var(--tx3);font-size:.6rem;transition:transform .25s;}
+.vol-block.coll .vol-chev{transform:rotate(-90deg);}
+.vol-block.coll .vol-chs{display:none;}
+.vol-chs{padding:3px 0;}
+.ch-row{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 24px;cursor:pointer;border-top:1px solid var(--bdr2);transition:background .2s;}
+.ch-row:hover{background:rgba(255,255,255,.04);}
+.ch-dot{width:4px;height:4px;border-radius:50%;background:var(--tx3);flex-shrink:0;}
+.ch-name{flex:1;font-size:.76rem;color:var(--tx2);letter-spacing:.04em;}
+.ch-wc{font-size:.54rem;color:var(--tx3);font-family:var(--sans);white-space:nowrap;}
+.ch-arr{color:var(--tx3);font-size:.6rem;}
+.sa-ch{display:flex;align-items:center;gap:7px;padding:8px 12px;cursor:pointer;border:1px solid var(--bdr);border-radius:8px;margin-bottom:5px;transition:all .2s;}
+.sa-ch:hover{background:var(--chov);}
+.sa-ch .ch-dot{background:var(--acc);}
+
+/* ── EDITOR ── */
+.editor-view{display:none;flex-direction:column;position:fixed;top:var(--hdr-h);bottom:var(--tab-h);left:50%;transform:translateX(-50%);width:100%;max-width:680px;background:var(--bg);z-index:50;}
+.editor-view.vis{display:flex;}
+.ed-top{display:flex;align-items:center;padding:8px 12px;gap:7px;border-bottom:1px solid var(--bdr);background:rgba(0,0,0,.32);flex-shrink:0;}
+.ed-title-inp{flex:1;background:none;border:none;color:var(--tx1);font-family:var(--serif);font-size:.84rem;letter-spacing:.07em;outline:none;}
+.ed-actions{display:flex;align-items:center;gap:3px;flex-shrink:0;}
+.ed-bar{display:flex;align-items:center;gap:2px;padding:4px 9px;border-bottom:1px solid var(--bdr2);flex-wrap:wrap;background:rgba(0,0,0,.22);flex-shrink:0;overflow-x:auto;}
+.ed-bar::-webkit-scrollbar{display:none;}
+.tb{background:none;border:none;color:var(--tx2);cursor:pointer;padding:3px 5px;border-radius:4px;font-size:.68rem;font-family:var(--serif);transition:all .14s;white-space:nowrap;}
+.tb:hover{background:rgba(255,255,255,.07);color:var(--tx1);}
+.tb-sep{color:var(--tx3);font-size:.6rem;padding:0 1px;opacity:.4;}
+.tb svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;}
+.ed-area{flex:1;overflow:hidden;position:relative;}
+textarea.ed-inp{width:100%;height:100%;background:none;border:none;outline:none;color:var(--tx1);font-family:var(--serif);font-size:.88rem;line-height:2.1;letter-spacing:.05em;padding:13px;resize:none;font-weight:300;}
+.ed-foot{display:flex;align-items:center;justify-content:space-between;padding:5px 12px;border-top:1px solid var(--bdr2);background:rgba(0,0,0,.28);flex-shrink:0;}
+.ed-wc{font-size:.60rem;color:var(--tx3);font-family:var(--sans);}
+.ed-wc span{color:var(--gold);font-weight:500;}
+.ewc-row{display:flex;gap:3px;}
+.ewc-btn{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:2px 6px;border-radius:20px;font-size:.54rem;cursor:pointer;font-family:var(--sans);transition:all .14s;}
+.ewc-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+.autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--tx3);display:inline-block;margin-left:5px;transition:background .3s;}
+.autosave-dot.saved{background:#6de0a0;}
+
+/* divider style chooser */
+.div-choice{display:flex;gap:7px;}
+.div-opt{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:6px;padding:9px 7px;cursor:pointer;text-align:center;font-size:.72rem;color:var(--tx2);transition:all .2s;}
+.div-opt:hover,.div-opt.sel{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+
+/* ── SETTINGS (book-based) ── */
+.settings-bk-sel{background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;font-family:var(--serif);color:var(--tx1);font-size:.78rem;width:100%;outline:none;margin-bottom:9px;}
+
+/* ── SHELF ── */
+.book-item{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--bdr2);align-items:flex-start;cursor:pointer;transition:background .15s;}
+.book-item:hover{background:rgba(255,255,255,.03);}
+.b-cover{width:32px;height:46px;border-radius:3px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.48rem;color:var(--tx3);writing-mode:vertical-rl;}
+.b-info{flex:1;}
+.b-name{font-size:.80rem;color:var(--tx1);letter-spacing:.07em;}
+.b-author{font-size:.56rem;color:var(--tx3);margin-top:2px;font-family:var(--sans);}
+.b-status{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:.54rem;margin-top:5px;font-family:var(--sans);}
+.ss-r{background:rgba(79,163,212,.14);color:var(--acc);border:1px solid rgba(79,163,212,.22);}
+.ss-d{background:rgba(80,200,120,.10);color:#6de0a0;border:1px solid rgba(80,200,120,.18);}
+.ss-u{background:rgba(255,255,255,.06);color:var(--tx3);border:1px solid var(--bdr);}
+.ss-x{background:rgba(200,100,80,.10);color:#e08070;border:1px solid rgba(200,100,80,.18);}
+.b-date{font-size:.54rem;color:var(--tx3);white-space:nowrap;font-family:var(--sans);}
+
+/* shelf stats */
+.shelf-filter-row{display:flex;gap:5px;margin-bottom:9px;flex-wrap:wrap;}
+.shelf-period-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-start;margin-top:9px;}
+.period-group label{display:block;font-size:.56rem;color:var(--tx3);font-family:var(--sans);margin-bottom:4px;letter-spacing:.07em;}
+.period-btns{display:flex;gap:4px;flex-wrap:wrap;}
+.per-btn{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:3px 8px;border-radius:20px;font-size:.58rem;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.per-btn.active{border-color:var(--acc);color:var(--acc);background:rgba(79,163,212,.08);}
+.stat-nums{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;}
+.rs-blk{display:flex;flex-direction:column;align-items:center;}
+.rs-num{font-size:1.45rem;font-family:var(--sans);color:var(--tx1);font-weight:600;line-height:1;}
+.rs-unit{font-size:.58rem;color:var(--tx3);font-family:var(--sans);}
+.rs-lbl{font-size:.56rem;color:var(--tx3);font-family:var(--sans);margin-top:2px;}
+/* reading goal circ */
+.shelf-circ-wrap{position:relative;width:88px;height:88px;flex-shrink:0;}
+.shelf-circ-wrap svg{transform:rotate(-90deg);width:88px;height:88px;}
+.shelf-circ-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.shelf-circ-pct{font-size:1.05rem;font-weight:600;color:var(--tx1);font-family:var(--sans);line-height:1;}
+.shelf-circ-sub{font-size:.46rem;color:var(--tx3);font-family:var(--sans);}
+/* daily rec */
+.rec-card{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.14);border-radius:8px;padding:11px;margin-top:9px;}
+.rec-lbl{font-size:.56rem;color:var(--gold);font-family:var(--sans);letter-spacing:.1em;margin-bottom:7px;}
+.rec-title{font-size:.83rem;color:var(--tx1);letter-spacing:.08em;margin-bottom:2px;}
+.rec-author{font-size:.58rem;color:var(--tx3);font-family:var(--sans);}
+.rec-desc{font-size:.70rem;color:var(--tx2);line-height:1.7;margin-top:5px;font-weight:300;}
+
+/* ── DIARY ── */
+.dq-box{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.14);border-radius:8px;padding:12px;margin-top:9px;}
+.dq-lbl{font-size:.54rem;color:var(--gold);letter-spacing:.1em;font-family:var(--sans);margin-bottom:6px;}
+.dq-q{font-size:.80rem;color:var(--tx1);line-height:1.8;letter-spacing:.05em;font-weight:300;}
+.dq-ans{margin-top:9px;width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;color:var(--tx1);font-family:var(--serif);font-size:.78rem;line-height:1.8;padding:8px 10px;resize:none;outline:none;min-height:72px;letter-spacing:.04em;}
+.search-row{display:flex;gap:7px;margin-bottom:9px;margin-top:9px;}
+.search-inp{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:8px;color:var(--tx1);font-family:var(--serif);font-size:.76rem;padding:7px 9px;outline:none;transition:border-color .2s;}
+.search-inp:focus{border-color:var(--acc);}
+.diary-list{margin-top:5px;display:flex;flex-direction:column;gap:6px;}
+.d-entry{background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:8px;padding:10px;}
+.d-entry-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.d-date{font-size:.56rem;color:var(--gold);font-family:var(--sans);}
+.d-entry-acts{display:flex;gap:5px;}
+.d-prev{font-size:.73rem;color:var(--tx2);line-height:1.55;font-weight:300;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;}
+
+/* ── LOG ── */
+.log-ent{padding:10px 0;border-bottom:1px solid var(--bdr2);}
+.log-v{font-size:.58rem;color:var(--gold);font-family:var(--sans);letter-spacing:.1em;}
+.log-d{font-size:.54rem;color:var(--tx3);font-family:var(--sans);margin-left:7px;}
+.log-c{font-size:.74rem;color:var(--tx2);line-height:1.8;margin-top:4px;font-weight:300;}
+
+/* ── SETTINGS PAGE ── */
+.setting-section{margin-bottom:12px;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr2);}
+.setting-label{font-size:.78rem;color:var(--tx1);}
+.setting-value{font-size:.72rem;color:var(--tx3);font-family:var(--sans);}
+.danger-zone{border:1px solid rgba(220,80,70,.25);border-radius:8px;padding:12px;margin-top:8px;}
+
+/* ── MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;}
+.modal-ov.vis{display:flex;}
+.modal-sh{background:var(--bg2);border:1px solid var(--bdr);border-radius:18px 18px 0 0;padding:17px;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;}
+.modal-sh::-webkit-scrollbar{width:3px;}
+.modal-sh::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px;}
+.m-handle{width:32px;height:3px;background:var(--tx3);border-radius:2px;margin:0 auto 13px;}
+.m-title{font-size:.88rem;color:var(--tx1);letter-spacing:.1em;margin-bottom:13px;display:flex;align-items:center;gap:7px;}
+.m-title::before{content:'●';font-size:.4rem;color:var(--gold);}
+.m-inp,.m-sel,.m-ta{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:8px;color:var(--tx1);font-family:var(--serif);font-size:.78rem;padding:8px 10px;outline:none;margin-bottom:8px;transition:border-color .2s;}
+.m-inp:focus,.m-sel:focus,.m-ta:focus{border-color:var(--acc);}
+.m-sel option{background:var(--bg2);}
+.m-ta{resize:none;min-height:65px;line-height:1.7;}
+.m-lbl{font-size:.58rem;color:var(--tx3);font-family:var(--sans);letter-spacing:.07em;display:block;margin-bottom:3px;}
+.m-btn{background:none;border:1px solid var(--bdr);color:var(--tx2);padding:9px;border-radius:8px;font-size:.68rem;cursor:pointer;font-family:var(--serif);letter-spacing:.07em;transition:all .2s;width:100%;margin-bottom:6px;}
+.m-btn:hover{border-color:var(--gold);color:var(--gold);}
+.rpt-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px;}
+.rpt-c{background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;padding:10px;text-align:center;}
+.rpt-c .rl{font-size:.54rem;color:var(--tx3);font-family:var(--sans);margin-bottom:4px;}
+.rpt-c .rv{font-size:1.2rem;color:var(--tx1);font-family:var(--sans);font-weight:600;line-height:1;}
+.rpt-c .rs2{font-size:.56rem;font-family:var(--sans);margin-top:3px;}
+.up{color:#6de0a0;}.dn{color:#e08070;}
+.tag-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.tag-opt{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:3px 8px;border-radius:20px;font-size:.60rem;cursor:pointer;font-family:var(--serif);transition:all .15s;user-select:none;}
+.tag-opt.sel{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.10);}
+
+/* Version history */
+.ver-item{padding:9px 0;border-bottom:1px solid var(--bdr2);cursor:pointer;}
+.ver-item:hover{background:rgba(255,255,255,.02);}
+.ver-time{font-size:.56rem;color:var(--gold);font-family:var(--sans);}
+.ver-prev{font-size:.70rem;color:var(--tx2);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:300;}
+.ver-restore{font-size:.58rem;color:var(--acc);margin-top:2px;font-family:var(--sans);}
+
+/* Preview */
+.preview-content{font-family:var(--serif);font-size:.86rem;line-height:2.1;color:var(--tx1);letter-spacing:.05em;font-weight:300;white-space:pre-wrap;padding:4px 0;}
+.preview-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:7px 0;color:var(--tx3);font-size:.72rem;}
+.preview-divider::before,.preview-divider::after{content:'';flex:1;height:1px;background:var(--bdr);}
+
+/* User panel + theme panel */
+.float-panel{display:none;position:fixed;top:calc(var(--hdr-h) + 7px);width:210px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:13px;z-index:150;box-shadow:0 8px 28px rgba(0,0,0,.45);}
+.float-panel.vis{display:block;}
+.fp-l{left:calc(50% - 340px + 8px);}
+.fp-r{right:calc(50% - 340px + 8px);}
+.tp-title{font-size:.70rem;color:var(--tx2);letter-spacing:.1em;margin-bottom:9px;font-family:var(--sans);}
+.tp-row{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap;}
+.clr-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .2s;flex-shrink:0;}
+.clr-dot.sel{border-color:var(--gold);}
+.sty-btn{background:none;border:1px solid var(--bdr);color:var(--tx3);padding:4px 9px;border-radius:6px;font-size:.60rem;cursor:pointer;font-family:var(--serif);transition:all .15s;}
+.sty-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.10);}
+
+/* BOOK DETAIL */
+#book-detail .toc-scroll{padding:13px 14px 80px;}
+
+/* TOAST */
+.toast{position:fixed;top:calc(var(--hdr-h)+10px);left:50%;transform:translateX(-50%) translateY(-8px);
+  background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.28);color:var(--gold);
+  padding:6px 17px;border-radius:20px;font-size:.66rem;font-family:var(--serif);letter-spacing:.07em;
+  z-index:300;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* responsive */
+@media(max-width:400px){.stats-top,.rpt-grid{grid-template-columns:1fr;}.fp-l{left:4px;}.fp-r{right:4px;}.tb-btn span{font-size:.48rem;}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<header id="hdr">
+  <div class="hdr-l">
+    <div class="ubadge" onclick="toggleFP('user-panel')" id="ubadge">訪客</div>
+  </div>
+  <div class="hdr-c">
+    <h1>鯨<em>•</em>啟</h1>
+    <p>你的海洋，由你創造</p>
+  </div>
+  <div class="hdr-r">
+    <button class="hdr-btn" onclick="toggleFP('theme-panel')">背景更換</button>
+  </div>
+</header>
+
+<!-- USER PANEL -->
+<div class="float-panel fp-l" id="user-panel">
+  <div id="up-out">
+    <div style="font-size:.68rem;color:var(--tx3);margin-bottom:9px;font-family:var(--sans)">訪客模式・關閉後清除</div>
+    <button class="btn-p" style="margin-top:0;font-size:.66rem" onclick="showModal('modal-login')">登入 / 註冊</button>
+  </div>
+  <div id="up-in" style="display:none">
+    <div style="font-size:.70rem;color:var(--tx1);margin-bottom:2px;font-family:var(--serif)" id="up-name2"></div>
+    <div style="font-size:.56rem;color:var(--tx3);margin-bottom:9px;font-family:var(--sans)" id="up-id2"></div>
+    <button class="btn-sm" style="width:100%;margin-bottom:5px" onclick="showModal('modal-rename')">更改名稱</button>
+    <button class="btn-sm" style="width:100%" onclick="logout()">登出</button>
+  </div>
+</div>
+
+<!-- THEME PANEL -->
+<div class="float-panel fp-r" id="theme-panel">
+  <div class="tp-title">主題顏色</div>
+  <div class="tp-row">
+    <div class="clr-dot sel" style="background:#0B182B" title="深藍" onclick="setTC('deep',this)"></div>
+    <div class="clr-dot" style="background:#B9CBE1" title="淺藍" onclick="setTC('lb',this)"></div>
+    <div class="clr-dot" style="background:#EDE6D6" title="米色" onclick="setTC('be',this)"></div>
+  </div>
+</div>
+
+<main id="content">
+
+<!-- ===== HOME ===== -->
+<div class="page active" id="page-home">
+  <div class="card fixed-open" id="card-quote">
+    <div class="card-hdr"><h2>每日一句</h2></div>
+    <div class="card-body">
+      <div class="quote-body">
+        <div class="quote-zh" id="q-zh"></div>
+        <div class="quote-orig" id="q-orig"></div>
+        <div class="quote-src" id="q-src"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:9px">
+        <button class="btn-g" onclick="nextQ()">換一句</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card fixed-open" id="card-stats">
+    <div class="card-hdr"><h2>統計</h2></div>
+    <div class="card-body">
+      <div class="wc-mode-row">
+        <button class="wc-btn" onclick="setWcMode('chars',this)">字元數</button>
+        <button class="wc-btn active" onclick="setWcMode('words',this)">字數（含標點）</button>
+        <button class="wc-btn" onclick="setWcMode('pure',this)">純文字</button>
+      </div>
+      <div class="stats-top">
+        <div class="stat-today">
+          <div class="lbl">今日累積</div>
+          <div class="cnt" id="today-cnt">0</div>
+          <div class="unt">字</div>
+        </div>
+        <div class="stat-circ">
+          <div class="lbl">作品進度</div>
+          <div class="circ-wrap">
+            <svg viewBox="0 0 70 70"><circle class="c-bg" cx="35" cy="35" r="26"/><circle class="c-fg" id="prog-circ" cx="35" cy="35" r="26" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg>
+            <div class="circ-txt"><span class="circ-pct" id="prog-pct">—</span><span class="circ-sub">完成</span></div>
+          </div>
+          <select class="circ-sel" id="prog-sel" onchange="updateProg()"><option value="">（無作品）</option></select>
+        </div>
+      </div>
+      <div class="chart-area">
+        <div class="chart-filter">
+          <button class="f-btn active" onclick="setChart('week',this)">當週</button>
+          <button class="f-btn" onclick="setChart('lweek',this)">上週</button>
+          <button class="f-btn" onclick="setChart('month',this)">當月</button>
+          <button class="f-btn" onclick="setChart('lmonth',this)">上月</button>
+          <button class="f-btn" onclick="setChart('year',this)">當年</button>
+        </div>
+        <div class="bar-chart" id="bar-chart"></div>
+      </div>
+      <button class="rpt-btn" onclick="showRptModal()">產生統計報表</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WORKS ===== -->
+<div class="page" id="page-works">
+  <div class="pg-hdr"><div class="pg-title">作品櫃</div><div class="pg-sub">管理你的所有創作</div></div>
+  <div class="card" id="card-wlist">
+    <div class="card-hdr" onclick="toggleCard('card-wlist')"><h2>書籍列表</h2><span class="ci">▾</span></div>
+    <div class="card-body">
+      <div id="works-list"></div>
+      <button class="btn-p" onclick="showNewWorkModal()">＋ 建立新書籍</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS (book) ===== -->
+<div class="page" id="page-settings">
+  <div class="pg-hdr"><div class="pg-title">設定區</div><div class="pg-sub">世界觀與寫作資料</div></div>
+  <div class="card" id="card-sbks">
+    <div class="card-hdr" onclick="toggleCard('card-sbks')"><h2>書籍設定</h2><span class="ci">▾</span></div>
+    <div class="card-body">
+      <select class="settings-bk-sel" id="settings-bk-sel" onchange="renderSettingsBook()"><option value="">請選擇書籍</option></select>
+      <div id="settings-bk-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SHELF ===== -->
+<div class="page" id="page-shelf">
+  <div class="pg-hdr"><div class="pg-title">書櫃</div><div class="pg-sub">閱讀記錄與書評</div></div>
+
+  <!-- 1. Reading Stats — fixed open -->
+  <div class="card fixed-open" id="card-rstats">
+    <div class="card-hdr"><h2>閱讀統計</h2></div>
+    <div class="card-body">
+      <div class="chart-filter" id="shelf-stat-mode-row" style="margin-top:9px">
+        <button class="f-btn active" onclick="setShelfStatMode('curMonth',this)">當月</button>
+        <button class="f-btn" onclick="setShelfStatMode('lastMonth',this)">上月</button>
+        <button class="f-btn" onclick="setShelfStatMode('curYear',this)">當年度</button>
+        <button class="f-btn" onclick="setShelfStatMode('lastYear',this)">上一年度</button>
+      </div>
+      <div class="stat-nums" id="shelf-stat-nums"></div>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:13px">
+        <div class="shelf-circ-wrap">
+          <svg viewBox="0 0 88 88"><circle fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7" cx="44" cy="44" r="34"/><circle fill="none" stroke="#6de0a0" stroke-width="7" stroke-linecap="round" id="shelf-prog-circ" cx="44" cy="44" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
+          <div class="shelf-circ-txt"><span class="shelf-circ-pct" id="shelf-prog-pct">0</span><span class="shelf-circ-sub">作品數</span></div>
+        </div>
+        <div style="flex:1" id="shelf-goal-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Book List -->
+  <div class="card" id="card-slist">
+    <div class="card-hdr" onclick="toggleCard('card-slist')"><h2>書籍列表</h2><span class="ci">▾</span></div>
+    <div class="card-body">
+      <div class="shelf-filter-row">
+        <button class="f-btn active" onclick="setShelfFilter('all',this)">全部</button>
+        <button class="f-btn" onclick="setShelfFilter('unread',this)">未閱讀</button>
+        <button class="f-btn" onclick="setShelfFilter('reading',this)">閱讀中</button>
+        <button class="f-btn" onclick="setShelfFilter('done',this)">已完讀</button>
+        <button class="f-btn" onclick="setShelfFilter('dropped',this)">未完讀</button>
+      </div>
+      <div id="shelf-list"></div>
+      <button class="btn-p" onclick="showModal('modal-new-book')">＋ 加入書籍</button>
+    </div>
+  </div>
+
+  <!-- 3. Daily Rec -->
+  <div class="card" id="card-rec">
+    <div class="card-hdr" onclick="toggleCard('card-rec')"><h2>每日推薦</h2><span class="ci">▾</span></div>
+    <div class="card-body" id="rec-body"></div>
+  </div>
+</div>
+
+<!-- ===== DIARY ===== -->
+<div class="page" id="page-diary">
+  <div class="pg-hdr"><div class="pg-title">日記</div><div class="pg-sub">每日思索與書寫</div></div>
+  <div class="card" id="card-dq">
+    <div class="card-hdr" onclick="toggleCard('card-dq')"><h2>每日問答</h2><span class="ci">▾</span></div>
+    <div class="card-body">
+      <div class="search-row"><input class="search-inp" placeholder="搜尋問答記錄…" id="dq-search" oninput="renderDQList()"/></div>
+      <div class="dq-box"><div class="dq-lbl">今日問題</div><div class="dq-q" id="daily-q"></div></div>
+      <textarea class="dq-ans" id="dq-ans" placeholder="在此寫下你的想法……" rows="4"></textarea>
+      <button class="btn-p" style="margin-top:0" onclick="saveDQ()">儲存今日答題</button>
+      <div class="diary-list" id="dq-list" style="margin-top:10px"></div>
+    </div>
+  </div>
+  <div class="card" id="card-diary">
+    <div class="card-hdr" onclick="toggleCard('card-diary')"><h2>日記記錄</h2><span class="ci">▾</span></div>
+    <div class="card-body">
+      <div class="search-row"><input class="search-inp" placeholder="搜尋日記…" id="diary-search" oninput="renderDiaryList()"/></div>
+      <button class="btn-p" style="margin-top:0;margin-bottom:7px" onclick="openDiaryEditor()">＋ 今日日記</button>
+      <div class="diary-list" id="diary-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOG ===== -->
+<div class="page" id="page-log">
+  <div class="pg-hdr"><div class="pg-title">app 記錄</div><div class="pg-sub">系統更新日誌</div></div>
+  <div class="card" id="card-log"><div class="card-hdr" onclick="toggleCard('card-log')"><h2>更新日誌</h2><span class="ci">▾</span></div><div class="card-body" id="log-list"></div></div>
+</div>
+
+<!-- ===== USER SETTINGS PAGE ===== -->
+<div class="page" id="page-usersettings">
+  <div class="pg-hdr"><div class="pg-title">設定</div><div class="pg-sub">帳號與資料管理</div></div>
+
+  <!-- Guest placeholder -->
+  <div id="settings-guest-msg" style="display:none">
+    <div class="card">
+      <div class="card-body" style="padding:24px 15px;text-align:center">
+        <div style="font-size:.82rem;color:var(--tx2);line-height:1.9;margin-bottom:14px">請先登入以使用設定功能</div>
+        <button class="btn-p" style="width:auto;padding:9px 28px" onclick="showModal('modal-login')">登入 / 註冊</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logged-in content -->
+  <div id="settings-logged-in">
+    <div class="card" id="card-userinfo">
+      <div class="card-hdr" onclick="toggleCard('card-userinfo')"><h2>使用者</h2><span class="ci">▾</span></div>
+      <div class="card-body">
+        <div class="setting-row"><span class="setting-label">名稱</span><span class="setting-value" id="si-name-disp">—</span></div>
+        <div class="setting-row"><span class="setting-label">用戶 ID</span><span class="setting-value" id="si-id-disp">—</span></div>
+        <button class="btn-sm" style="margin-top:9px" onclick="showModal('modal-rename')">更改名稱</button>
+      </div>
+    </div>
+
+    <div class="card" id="card-backup">
+      <div class="card-hdr" onclick="toggleCard('card-backup')"><h2>匯出備份</h2><span class="ci">▾</span></div>
+      <div class="card-body">
+        <p style="font-size:.72rem;color:var(--tx2);line-height:1.7;margin-top:10px">可將書籍匯出為 Word 或 PDF，選擇下載至裝置或直接上傳至 Google 雲端硬碟。</p>
+        <label class="m-lbl" style="margin-top:10px">選擇要備份的書籍</label>
+        <select class="m-sel" id="backup-work-sel"></select>
+        <label class="m-lbl">匯出格式</label>
+        <select class="m-sel" id="backup-fmt">
+          <option value="word">Word (.docx)</option>
+          <option value="pdf">PDF (.pdf)</option>
+        </select>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:2px">
+          <button class="btn-p" style="width:auto;flex:1" onclick="exportWork('device')">下載至裝置</button>
+          <button class="btn-g" style="flex:1" onclick="exportWork('drive')">上傳 Google Drive</button>
+        </div>
+        <p style="font-size:.60rem;color:var(--tx3);margin-top:8px;line-height:1.6">* 上傳 Google Drive 需授權，上傳後不另下載至裝置。</p>
+      </div>
+    </div>
+
+    <div class="card coll" id="card-del-acct">
+      <div class="card-hdr" onclick="toggleCard('card-del-acct')"><h2>刪除帳號</h2><span class="ci">▾</span></div>
+      <div class="card-body">
+        <div class="danger-zone">
+          <p style="font-size:.72rem;color:#e08070;line-height:1.7;margin-bottom:10px">⚠️ 刪除帳號前，強烈建議先備份所有書籍資料。刪除後所有資料將永久清除，無法復原。</p>
+          <button class="btn-p" style="background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.25);color:var(--gold);margin-bottom:10px" onclick="exportAllWorks()">先備份所有書籍</button>
+          <button class="btn-danger" style="width:100%" onclick="showDeleteAccountModal()">刪除帳號</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- TABBAR -->
+<nav id="tabbar">
+  <button class="tb-btn active" onclick="switchTab('home',this)">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1v-9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg><span>首頁</span>
+  </button>
+  <button class="tb-btn" onclick="switchTab('works',this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg><span>作品櫃</span>
+  </button>
+  <button class="tb-btn" onclick="switchTab('settings',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>設定區</span>
+  </button>
+  <button class="tb-btn" onclick="switchTab('shelf',this)">
+    <svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h11a2 2 0 012 2v14"/><line x1="4" y1="19" x2="20" y2="19"/><line x1="9" y1="3" x2="9" y2="19"/></svg><span>書櫃</span>
+  </button>
+  <button class="tb-btn" onclick="switchTab('diary',this)">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg><span>日記</span>
+  </button>
+  <button class="tb-btn" onclick="switchTab('log',this)">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>更新</span>
+  </button>
+  <button class="tb-btn" onclick="switchTab('usersettings',this)">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>設定</span>
+  </button>
+</nav>
+</div><!-- #app -->
+
+<!-- WORK DETAIL (TOC) -->
+<div class="ov-view" id="work-detail">
+  <div class="ov-top">
+    <button class="btn-back" onclick="closeWorkDetail()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="ov-title" id="wd-title"></div>
+    <button class="btn-g" style="font-size:.58rem;padding:3px 8px" onclick="editWorkMeta()">編輯</button>
+    <button class="btn-danger" style="font-size:.58rem;padding:3px 8px" onclick="deleteCurrentWork()">刪除</button>
+  </div>
+  <div class="toc-scroll">
+    <div class="toc-add-row">
+      <button class="btn-sm" onclick="addVol()">＋ 分卷</button>
+      <button class="btn-sm" onclick="addCh(null)">＋ 章節</button>
+    </div>
+    <div id="toc-content"></div>
+  </div>
+</div>
+
+<!-- SETTINGS BOOK DETAIL -->
+<div class="ov-view" id="settings-detail">
+  <div class="ov-top">
+    <button class="btn-back" onclick="closeOV('settings-detail')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="ov-title" id="sd-title"></div>
+  </div>
+  <div class="toc-scroll">
+    <div style="display:flex;gap:6px;margin-bottom:11px">
+      <button class="btn-sm" id="sd-add-btn">＋ 新增</button>
+    </div>
+    <div id="sd-list"></div>
+  </div>
+</div>
+
+<!-- EDITOR VIEW -->
+<div class="editor-view" id="editor-view">
+  <div class="ed-top">
+    <button class="btn-back" onclick="closeEditor()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <input class="ed-title-inp" id="ed-title" placeholder="標題……"/>
+    <div class="ed-actions">
+      <button class="btn-icon" title="版本記錄" onclick="showVersions()"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></button>
+      <button class="btn-icon" title="預覽" onclick="showPreview()"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></button>
+      <button class="btn-g" onclick="saveEditor(true)" style="font-size:.60rem;padding:4px 9px">儲存<span class="autosave-dot" id="save-dot"></span></button>
+    </div>
+  </div>
+  <div class="ed-bar">
+    <button class="tb" onclick="edUndo()" title="復原"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></button>
+    <button class="tb" onclick="edRedo()" title="取消復原"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></button>
+    <span class="tb-sep">|</span>
+    <button class="tb" onclick="insertIndent()">縮排</button>
+    <button class="tb" onclick="showDivChoice()">分隔線</button>
+    <span class="tb-sep">|</span>
+    <span style="font-size:.56rem;color:var(--tx3);font-family:var(--sans)">標點</span>
+    <button class="tb" onclick="ins('，')">，</button>
+    <button class="tb" onclick="ins('。')">。</button>
+    <button class="tb" onclick="ins('、')">、</button>
+    <button class="tb" onclick="ins('～')">～</button>
+    <button class="tb" onclick="ins('——')">——</button>
+    <button class="tb" onclick="ins('：')">：</button>
+    <button class="tb" onclick="insPair('「','」')">「」</button>
+    <button class="tb" onclick="insPair('『','』')">『』</button>
+  </div>
+  <div class="ed-area">
+    <textarea class="ed-inp" id="ed-ta" placeholder="在此書寫……" oninput="onEdInp()" onkeydown="handleEdKey(event)"></textarea>
+  </div>
+  <div class="ed-foot">
+    <div class="ed-wc">字數：<span id="ed-wc">0</span></div>
+    <div class="ewc-row">
+      <button class="ewc-btn" onclick="setEWc('chars',this)">字元</button>
+      <button class="ewc-btn active" onclick="setEWc('words',this)">字數</button>
+      <button class="ewc-btn" onclick="setEWc('pure',this)">純文字</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOK DETAIL (SHELF) -->
+<div class="ov-view" id="book-detail">
+  <div class="ov-top">
+    <button class="btn-back" onclick="closeOV('book-detail')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="ov-title" id="bd-title">書籍詳情</div>
+    <button class="btn-danger" style="font-size:.58rem;padding:3px 8px" onclick="deleteCurrentBook()">刪除</button>
+  </div>
+  <div class="toc-scroll" id="bd-body"></div>
+</div>
+
+<!-- ======= MODALS ======= -->
+<!-- Login/Register -->
+<div class="modal-ov" id="modal-login" onclick="closeMOIf(event,'modal-login')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">登入 / 註冊</div>
+    <label class="m-lbl">帳號名稱</label><input class="m-inp" id="auth-name" placeholder="顯示名稱"/>
+    <label class="m-lbl">用戶 ID（建立後不可更改，英數字 2-20 碼）</label><input class="m-inp" id="auth-id" placeholder="唯一識別碼"/>
+    <button class="btn-p" style="margin-top:2px" onclick="doAuth()">確認登入 / 註冊</button>
+    <button class="m-btn" onclick="closeModal('modal-login')">取消</button>
+  </div>
+</div>
+
+<!-- Rename -->
+<div class="modal-ov" id="modal-rename" onclick="closeMOIf(event,'modal-rename')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">更改名稱</div>
+    <label class="m-lbl">新名稱</label><input class="m-inp" id="rename-val" placeholder="輸入新名稱"/>
+    <button class="btn-p" style="margin-top:2px" onclick="doRename()">確認</button>
+    <button class="m-btn" onclick="closeModal('modal-rename')">取消</button>
+  </div>
+</div>
+
+<!-- New Work -->
+<div class="modal-ov" id="modal-new-work" onclick="closeMOIf(event,'modal-new-work')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title" id="nw-modal-title">建立新書籍</div>
+    <label class="m-lbl">書籍標題</label><input class="m-inp" id="nw-title" placeholder="書籍名稱…"/>
+    <label class="m-lbl">預計字數</label><input class="m-inp" type="number" id="nw-target" placeholder="例：100000"/>
+    <label class="m-lbl">更新狀態</label>
+    <select class="m-sel" id="nw-status"><option value="serial">連載中</option><option value="done">已完結</option><option value="off">下架中</option></select>
+    <label class="m-lbl">作品類型（可複選）</label>
+    <div class="tag-grid" id="nw-tags"></div>
+    <label class="m-lbl">封面圖片（選擇性上傳）</label>
+    <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
+      <button class="btn-sm" onclick="document.getElementById('cv-upload').click()">上傳圖片</button>
+      <button class="btn-sm" onclick="clearCover()">無封面</button>
+    </div>
+    <input type="file" id="cv-upload" accept="image/*" style="display:none" onchange="handleCoverUpload(event)"/>
+    <div id="cv-preview" style="display:none;margin-bottom:8px"><img id="cv-img" style="width:56px;height:80px;object-fit:cover;border-radius:3px;border:1px solid var(--bdr)"/></div>
+    <button class="btn-p" style="margin-top:2px" onclick="saveNewWork()">建立</button>
+    <button class="m-btn" onclick="closeModal('modal-new-work')">取消</button>
+  </div>
+</div>
+
+<!-- Add Volume -->
+<div class="modal-ov" id="modal-add-vol" onclick="closeMOIf(event,'modal-add-vol')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">新增分卷</div>
+    <label class="m-lbl">分卷名稱</label><input class="m-inp" id="vol-name-inp" placeholder="例：第一卷　序章"/>
+    <button class="btn-p" style="margin-top:2px" onclick="confirmAddVol()">建立</button>
+    <button class="m-btn" onclick="closeModal('modal-add-vol')">取消</button>
+  </div>
+</div>
+
+<!-- Add Chapter -->
+<div class="modal-ov" id="modal-add-ch" onclick="closeMOIf(event,'modal-add-ch')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">新增章節</div>
+    <label class="m-lbl">章節名稱</label><input class="m-inp" id="ch-name-inp" placeholder="例：第一章　黎明前"/>
+    <label class="m-lbl">所屬分卷</label><select class="m-sel" id="ch-vol-sel"></select>
+    <button class="btn-p" style="margin-top:2px" onclick="confirmAddCh()">建立並開始寫作</button>
+    <button class="m-btn" onclick="closeModal('modal-add-ch')">取消</button>
+  </div>
+</div>
+
+<!-- New Book (Shelf) -->
+<div class="modal-ov" id="modal-new-book" onclick="closeMOIf(event,'modal-new-book')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">加入書籍</div>
+    <label class="m-lbl">書名</label><input class="m-inp" id="nb-title" placeholder="書名…"/>
+    <label class="m-lbl">作者</label><input class="m-inp" id="nb-author" placeholder="作者…"/>
+    <label class="m-lbl">ISBN</label><input class="m-inp" id="nb-isbn" placeholder="ISBN 碼（選填）"/>
+    <label class="m-lbl">閱讀狀態</label>
+    <select class="m-sel" id="nb-status"><option value="unread">未閱讀</option><option value="reading">閱讀中</option><option value="done">已完讀</option><option value="dropped">未完讀</option></select>
+    <label class="m-lbl">閱讀日期</label><input class="m-inp" type="date" id="nb-date"/>
+    <button class="btn-p" style="margin-top:2px" onclick="addShelfBook()">加入書櫃</button>
+    <button class="m-btn" onclick="closeModal('modal-new-book')">取消</button>
+  </div>
+</div>
+
+<!-- Divider Choice -->
+<div class="modal-ov" id="modal-div" onclick="closeMOIf(event,'modal-div')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">選擇分隔線樣式</div>
+    <div class="div-choice">
+      <div class="div-opt sel" id="div-whale" onclick="selectDiv('whale',this)"><div>── 🐋 ──</div><div style="font-size:.54rem;color:var(--tx3);margin-top:3px">鯨魚</div></div>
+      <div class="div-opt" id="div-wave" onclick="selectDiv('wave',this)"><div>── 〜 ──</div><div style="font-size:.54rem;color:var(--tx3);margin-top:3px">海浪</div></div>
+    </div>
+    <button class="btn-p" style="margin-top:9px" onclick="insertDiv()">插入</button>
+    <button class="m-btn" onclick="closeModal('modal-div')">取消</button>
+  </div>
+</div>
+
+<!-- Version History -->
+<div class="modal-ov" id="modal-versions" onclick="closeMOIf(event,'modal-versions')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">版本記錄（最多 5 則）</div>
+    <div id="ver-list"></div>
+    <button class="m-btn" onclick="closeModal('modal-versions')">關閉</button>
+  </div>
+</div>
+
+<!-- Preview -->
+<div class="modal-ov" id="modal-preview" onclick="closeMOIf(event,'modal-preview')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title" id="prev-title"></div>
+    <div class="preview-content" id="prev-content"></div>
+    <button class="m-btn" style="margin-top:13px" onclick="closeModal('modal-preview')">關閉</button>
+  </div>
+</div>
+
+<!-- Report -->
+<div class="modal-ov" id="modal-rpt" onclick="closeMOIf(event,'modal-rpt')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">統計報表</div>
+    <div class="rpt-grid" id="rpt-grid"></div>
+    <button class="m-btn" onclick="closeModal('modal-rpt')">關閉</button>
+  </div>
+</div>
+
+<!-- New Setting Item -->
+<div class="modal-ov" id="modal-new-si" onclick="closeMOIf(event,'modal-new-si')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title" id="si-modal-title">新增項目</div>
+    <label class="m-lbl">名稱</label><input class="m-inp" id="si-name" placeholder="輸入名稱…"/>
+    <input type="hidden" id="si-book-id"/><input type="hidden" id="si-cat-key"/>
+    <button class="btn-p" style="margin-top:2px" onclick="confirmNewSI()">建立並編輯</button>
+    <button class="m-btn" onclick="closeModal('modal-new-si')">取消</button>
+  </div>
+</div>
+
+<!-- Edit DQ entry -->
+<div class="modal-ov" id="modal-edit-dq" onclick="closeMOIf(event,'modal-edit-dq')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">編輯問答</div>
+    <input type="hidden" id="edit-dq-date"/>
+    <label class="m-lbl">問題</label>
+    <textarea class="m-ta" id="edit-dq-q" rows="2" style="margin-bottom:7px"></textarea>
+    <label class="m-lbl">答案</label>
+    <textarea class="m-ta" id="edit-dq-a" rows="4"></textarea>
+    <button class="btn-p" style="margin-top:2px" onclick="saveDQEdit()">儲存</button>
+    <button class="m-btn" onclick="closeModal('modal-edit-dq')">取消</button>
+  </div>
+</div>
+
+<!-- Annual Goal -->
+<div class="modal-ov" id="modal-goal" onclick="closeMOIf(event,'modal-goal')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title">設定年度閱讀目標</div>
+    <label class="m-lbl">目標作品數（冊）</label>
+    <input class="m-inp" type="number" id="goal-inp" placeholder="例如：12"/>
+    <p style="font-size:.62rem;color:var(--tx3);margin-bottom:8px">此目標設定後僅可修改一次，請謹慎填寫。</p>
+    <button class="btn-p" style="margin-top:2px" onclick="saveGoal()">確認</button>
+    <button class="m-btn" onclick="closeModal('modal-goal')">取消</button>
+  </div>
+</div>
+
+<!-- Delete Account Confirm -->
+<div class="modal-ov" id="modal-del-acct" onclick="closeMOIf(event,'modal-del-acct')">
+  <div class="modal-sh">
+    <div class="m-handle"></div>
+    <div class="m-title" style="color:#e08070">確認刪除帳號</div>
+    <p style="font-size:.72rem;color:#e08070;line-height:1.8;margin-bottom:12px">⚠️ 此操作將永久清除你的帳號及所有資料（作品、書櫃、日記、設定），無法復原。</p>
+    <p style="font-size:.72rem;color:var(--tx2);line-height:1.7;margin-bottom:12px">如尚未備份，請先關閉此視窗並使用「先備份所有書籍」功能。</p>
+    <label class="m-lbl">輸入你的用戶 ID 以確認</label>
+    <input class="m-inp" id="del-id-confirm" placeholder="輸入 ID…"/>
+    <button class="btn-danger" style="width:100%;padding:10px;font-size:.72rem;border-radius:8px;margin-bottom:6px" onclick="deleteAccount()">確認永久刪除</button>
+    <button class="m-btn" onclick="closeModal('modal-del-acct')">取消</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+// ─────────────────────────────────────────────────────────────
+// STORAGE
+// ─────────────────────────────────────────────────────────────
+const LS={
+  get(k){try{return JSON.parse(localStorage.getItem('wq_'+k))}catch{return null}},
+  set(k,v){try{localStorage.setItem('wq_'+k,JSON.stringify(v))}catch(e){console.warn('LS.set',e)}},
+  del(k){localStorage.removeItem('wq_'+k)}
+};
+// Session (guest) store — memory only
+const SS={_d:{},get(k){return this._d[k]??null},set(k,v){this._d[k]=v},del(k){delete this._d[k]}};
+
+// ─────────────────────────────────────────────────────────────
+// USER SYSTEM
+// ─────────────────────────────────────────────────────────────
+let CUR=null; // {name,id}
+
+function getStore(){
+  if(!CUR) return SS;
+  const pfx='u_'+CUR.id+'_';
+  return {get(k){return LS.get(pfx+k)},set(k,v){LS.set(pfx+k,v)},del(k){LS.del(pfx+k)}};
+}
+
+function initUser(){
+  CUR=LS.get('cur_user');
+  renderUserUI();
+}
+
+function doAuth(){
+  const name=(document.getElementById('auth-name').value||'').trim();
+  const id=(document.getElementById('auth-id').value||'').trim().toLowerCase().replace(/\s/g,'');
+  if(!name||!id){showToast('請填寫名稱與 ID');return;}
+  if(!/^[a-z0-9_-]{2,20}$/.test(id)){showToast('ID 限英文小寫、數字、_ -，2-20 碼');return;}
+  const users=LS.get('all_users')||{};
+  if(!users[id]){
+    users[id]={name,createdAt:Date.now()};
+    LS.set('all_users',users);
+  }
+  CUR={name:users[id].name,id};
+  LS.set('cur_user',CUR);
+  // clear inputs
+  document.getElementById('auth-name').value='';
+  document.getElementById('auth-id').value='';
+  closeModal('modal-login');
+  renderUserUI();loadUserData();
+  showToast('歡迎，'+CUR.name);
+}
+
+function doRename(){
+  const n=(document.getElementById('rename-val').value||'').trim();
+  if(!n){showToast('請輸入名稱');return;}
+  CUR.name=n;
+  const users=LS.get('all_users')||{};
+  if(users[CUR.id])users[CUR.id].name=n;
+  LS.set('all_users',users);LS.set('cur_user',CUR);
+  closeModal('modal-rename');renderUserUI();showToast('名稱已更新');
+}
+
+function logout(){
+  CUR=null;LS.del('cur_user');
+  SS._d={};
+  document.getElementById('user-panel').classList.remove('vis');
+  // clear login inputs
+  document.getElementById('auth-name').value='';
+  document.getElementById('auth-id').value='';
+  renderUserUI();loadUserData();showToast('已登出');
+}
+
+function renderUserUI(){
+  const badge=document.getElementById('ubadge');
+  const lo=document.getElementById('up-out');
+  const li=document.getElementById('up-in');
+  if(CUR){
+    badge.textContent=CUR.name;
+    lo.style.display='none';li.style.display='block';
+    document.getElementById('up-name2').textContent=CUR.name;
+    document.getElementById('up-id2').textContent='@'+CUR.id;
+    document.getElementById('si-name-disp').textContent=CUR.name;
+    document.getElementById('si-id-disp').textContent='@'+CUR.id;
+  } else {
+    badge.textContent='訪客';
+    lo.style.display='block';li.style.display='none';
+    document.getElementById('si-name-disp').textContent='—（未登入）';
+    document.getElementById('si-id-disp').textContent='—';
+  }
+}
+
+function deleteAccount(){
+  if(!CUR){showToast('尚未登入');return;}
+  const val=(document.getElementById('del-id-confirm').value||'').trim().toLowerCase();
+  if(val!==CUR.id){showToast('ID 不符，請重新輸入');return;}
+  if(!confirm('確定要刪除帳號「'+CUR.id+'」的所有資料？此操作無法復原。'))return;
+  // remove all user keys
+  const keys=Object.keys(localStorage).filter(k=>k.startsWith('wq_u_'+CUR.id+'_'));
+  keys.forEach(k=>localStorage.removeItem(k));
+  const users=LS.get('all_users')||{};
+  delete users[CUR.id];
+  LS.set('all_users',users);
+  logout();
+  showToast('帳號已刪除');
+}
+
+function backupBeforeDelete(){
+  if(!CUR){showToast('請先登入');return;}
+  exportAllWorks();
+}
+
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
+let ST={
+  works:[],shelf:[],diary:[],dqData:{},editorData:{},settings:{},dailyWc:{},
+  shelfGoal:0,goalEdited:false, // goal editable only once
+  shelfYear:new Date().getFullYear()+'',shelfMonth:'0',
+  shelfFilter:'all',wcMode:'words',eWcMode:'words',
+  chartFilter:'week',divStyle:'whale',
+  themeColor:'deep',themeStyle:'flat'
+};
+
+function loadUserData(){
+  const S=getStore();
+  ST.works=S.get('works')||[];
+  ST.shelf=S.get('shelf')||[];
+  ST.diary=S.get('diary')||[];
+  ST.dqData=S.get('dqData')||{};
+  ST.editorData=S.get('editorData')||{};
+  ST.settings=S.get('settings')||{};
+  ST.dailyWc=S.get('dailyWc')||{};
+  ST.shelfGoal=S.get('shelfGoal')||0;
+  ST.goalEdited=S.get('goalEdited')||false;
+  renderAll();
+}
+
+function saveAll(){
+  const S=getStore();
+  S.set('works',ST.works);S.set('shelf',ST.shelf);S.set('diary',ST.diary);
+  S.set('dqData',ST.dqData);S.set('editorData',ST.editorData);
+  S.set('settings',ST.settings);S.set('dailyWc',ST.dailyWc);
+  S.set('shelfGoal',ST.shelfGoal);S.set('goalEdited',ST.goalEdited);
+}
+
+function renderAll(){
+  renderWorks();renderShelf();renderShelfStats();renderDiary();renderLogs();
+  renderSettingsBookSelect();renderProgressSelect();renderChart();renderTodayWc();
+  renderRec();renderYearBtns();renderMonthBtns();renderShelfGoalArea();
+  renderBackupWorkSel();
+}
+
+// ─────────────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────────────
+const TODAY=(()=>{const d=new Date();return p2y(d)+'/'+p2(d.getMonth()+1)+'/'+p2(d.getDate());})();
+function p2(n){return String(n).padStart(2,'0');}
+function p2y(d){return d.getFullYear();}
+function fmtD(d){return p2y(d)+'/'+p2(d.getMonth()+1)+'/'+p2(d.getDate());}
+function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function cntWords(t,m){
+  if(!t)return 0;
+  if(m==='chars')return t.length;
+  if(m==='pure')return t.replace(/[^\u4e00-\u9fff\u3400-\u4dbfa-zA-Z0-9]/g,'').length;
+  return t.replace(/[\s\n\r]/g,'').replace(/[-—─]{3,}/g,'').length;
+}
+
+// ─────────────────────────────────────────────────────────────
+// QUOTES
+// ─────────────────────────────────────────────────────────────
+const QUOTES=[
+  {zh:'你不能把時間塞進抽屜，但你能把時間塞進詞語。',orig:'',src:'── 村上春樹，《挪威的森林》'},
+  {zh:'存在先於本質。',orig:'L\'existence précède l\'essence.',src:'── 沙特，《存在與虛無》（法）'},
+  {zh:'詩不是感情的放縱，而是從感情中逃離。',orig:'Poetry is not a turning loose of emotion, but an escape from emotion.',src:'── T.S. 艾略特，〈傳統與個人才能〉（英）'},
+  {zh:'語言是存在的家。人棲居於語言之中。',orig:'Die Sprache ist das Haus des Seins.',src:'── 海德格爾，《關於人道主義的書信》（德）'},
+  {zh:'人是生而自由的，卻無往不在枷鎖之中。',orig:'L\'homme est né libre, et partout il est dans les fers.',src:'── 盧梭，《社會契約論》（法）'},
+  {zh:'我不知道我的道路，但我腳下踩的是地。',orig:'',src:'── 保羅·策蘭，《罌粟與記憶》'},
+  {zh:'有些事，不說是個結，說了是個疤。',orig:'',src:'── 張愛玲，散文集'},
+  {zh:'寫作是孤獨的人與這個世界的對話。',orig:'',src:'── 奧罕·帕慕克，訪談錄'},
+  {zh:'沒有什麼比一個好的故事更能讓黑暗退潮。',orig:'',src:'── 伊塔羅·卡爾維諾，《如果在冬夜，一個旅人》'},
+  {zh:'詞語是一切的開端，也是一切的終結。',orig:'',src:'── 波赫士，詩論'},
+  {zh:'愛，是一切詩歌的核心。',orig:'Love is the very core of all poetry.',src:'── 泰戈爾，《吉檀迦利》（英）'},
+  {zh:'在最深的夜，我聽見鯨魚的歌聲穿過海水而來。',orig:'',src:'── 鯨・啟（虛構語錄）'},
+];
+// Daily index: changes each calendar day; nextQ allows manual override
+const _DAY_BASE=(()=>{const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();})();
+let qIdx=_DAY_BASE % QUOTES.length;
+function setQuote(){
+  const q=QUOTES[qIdx];
+  document.getElementById('q-zh').textContent=q.zh;
+  const origEl=document.getElementById('q-orig');
+  origEl.textContent=q.orig||'';
+  origEl.style.display=q.orig?'block':'none';
+  document.getElementById('q-src').textContent=q.src;
+}
+function nextQ(){qIdx=(qIdx+1)%QUOTES.length;setQuote();}
+
+const DQ=[
+  '在你的生活中，有哪個反覆出現的主題或意象，讓你覺得值得寫下來？它代表什麼？',
+  '你最近讀到的一句話，讓你思考了很久。那句話是什麼，它觸動了你什麼？',
+  '如果你的寫作風格是一種天氣，它會是什麼？為什麼？',
+  '你認為「誠實」在寫作中意味著什麼？',
+  '什麼樣的失敗經歷，最後反而成為你創作的養分？',
+  '描述一個對你影響深遠的地方。那裡有什麼氣味、聲音、光線？',
+  '你的某個角色，與你有什麼相同之處？',
+  '你覺得沉默在文學中有什麼作用？',
+  '什麼問題是你一直想透過寫作探索但還沒有答案的？',
+  '你今天最真實的感受是什麼？能用一個畫面或比喻描述嗎？',
+];
+
+// ─────────────────────────────────────────────────────────────
+// TAB / CARD / PANEL
+// ─────────────────────────────────────────────────────────────
+function switchTab(tab,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  btn.classList.add('active');
+  closeFPs();
+  if(tab==='shelf'){renderShelf();renderShelfStats();}
+  if(tab==='works')renderWorks();
+  if(tab==='diary')renderDiary();
+  if(tab==='settings')renderSettingsBookSelect();
+  if(tab==='usersettings'){renderUserUI();renderSettingsPageVisibility();renderBackupWorkSel();}
+}
+
+function renderSettingsPageVisibility(){
+  const guestMsg=document.getElementById('settings-guest-msg');
+  const loggedIn=document.getElementById('settings-logged-in');
+  if(CUR){
+    guestMsg.style.display='none';
+    loggedIn.style.display='block';
+  } else {
+    guestMsg.style.display='block';
+    loggedIn.style.display='none';
+  }
+}
+
+function toggleCard(id){
+  const el=document.getElementById(id);
+  if(el.classList.contains('fixed-open'))return;
+  el.classList.toggle('coll');
+}
+
+function closeFPs(){
+  document.getElementById('user-panel').classList.remove('vis');
+  document.getElementById('theme-panel').classList.remove('vis');
+}
+function toggleFP(id){
+  const el=document.getElementById(id);
+  const other=id==='user-panel'?'theme-panel':'user-panel';
+  document.getElementById(other).classList.remove('vis');
+  el.classList.toggle('vis');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#theme-panel')&&!e.target.closest('[onclick*="theme-panel"]'))
+    document.getElementById('theme-panel').classList.remove('vis');
+  if(!e.target.closest('#user-panel')&&!e.target.closest('.ubadge'))
+    document.getElementById('user-panel').classList.remove('vis');
+});
+
+// ─────────────────────────────────────────────────────────────
+// THEME  (3 colours only, no style toggle)
+// ─────────────────────────────────────────────────────────────
+const TC_MAP={deep:'',lb:'th-lb',be:'th-be'};
+
+function setTC(c,el){
+  ST.themeColor=c;
+  document.querySelectorAll('.clr-dot').forEach(d=>d.classList.remove('sel'));
+  el.classList.add('sel');
+  document.body.className=TC_MAP[c]||'';
+}
+// waves no longer used
+function startWaves(){}
+function stopWaves(){}
+
+// ─────────────────────────────────────────────────────────────
+// STATS / WC
+// ─────────────────────────────────────────────────────────────
+function setWcMode(m,btn){
+  ST.wcMode=m;
+  document.querySelectorAll('.wc-mode-row .wc-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderTodayWc();updateProg();
+}
+function setEWc(m,btn){
+  ST.eWcMode=m;
+  document.querySelectorAll('.ewc-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');updateEdWc();
+}
+
+function calcWorkWc(w){
+  return(w.chapters||[]).reduce((s,ch)=>s+cntWords(ST.editorData['ch_'+ch.id]||'',ST.wcMode),0);
+}
+function renderTodayWc(){
+  document.getElementById('today-cnt').textContent=(ST.dailyWc[TODAY]||0).toLocaleString();
+}
+function addDailyWc(delta){
+  if(delta<=0)return;
+  ST.dailyWc[TODAY]=(ST.dailyWc[TODAY]||0)+delta;
+  getStore().set('dailyWc',ST.dailyWc);
+  renderTodayWc();renderChart();updateProg();
+}
+
+// CHART
+function getChartDat(){
+  const n=new Date();
+  const days=c=>{const r=[];for(let i=c-1;i>=0;i--){const x=new Date(n);x.setDate(n.getDate()-i);r.push(x);}return r;};
+  if(ST.chartFilter==='week'){const d=days(7);return{labels:['一','二','三','四','五','六','日'],data:d.map(x=>ST.dailyWc[fmtD(x)]||0)};}
+  if(ST.chartFilter==='lweek'){const d=days(14).slice(0,7);return{labels:['一','二','三','四','五','六','日'],data:d.map(x=>ST.dailyWc[fmtD(x)]||0)};}
+  if(ST.chartFilter==='month'){
+    const dim=new Date(n.getFullYear(),n.getMonth()+1,0).getDate();
+    const d=Array.from({length:dim},(_,i)=>new Date(n.getFullYear(),n.getMonth(),i+1));
+    return{labels:d.map(x=>x.getDate()+''),data:d.map(x=>ST.dailyWc[fmtD(x)]||0)};
+  }
+  if(ST.chartFilter==='lmonth'){
+    const lm=new Date(n.getFullYear(),n.getMonth()-1,1);
+    const dim=new Date(lm.getFullYear(),lm.getMonth()+1,0).getDate();
+    const d=Array.from({length:dim},(_,i)=>new Date(lm.getFullYear(),lm.getMonth(),i+1));
+    return{labels:d.map(x=>x.getDate()+''),data:d.map(x=>ST.dailyWc[fmtD(x)]||0)};
+  }
+  const ms=['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+  return{labels:ms.map(m=>m+'月'),data:ms.map((_,i)=>{
+    let s=0;const dim=new Date(n.getFullYear(),i+1,0).getDate();
+    for(let d2=1;d2<=dim;d2++)s+=ST.dailyWc[n.getFullYear()+'/'+p2(i+1)+'/'+p2(d2)]||0;return s;
+  })};
+}
+function setChart(f,btn){
+  ST.chartFilter=f;
+  document.querySelectorAll('.chart-filter .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderChart();
+}
+function renderChart(){
+  const{labels,data}=getChartDat();const max=Math.max(...data,1);
+  document.getElementById('bar-chart').innerHTML=labels.map((l,i)=>
+    `<div class="bar-col"><div class="bar" style="height:${Math.round((data[i]/max)*74)}px" title="${data[i].toLocaleString()} 字"></div><div class="bar-lbl">${l}</div></div>`
+  ).join('');
+}
+
+function renderProgressSelect(){
+  const sel=document.getElementById('prog-sel');
+  sel.innerHTML=ST.works.length
+    ?ST.works.map((w,i)=>`<option value="${i}">${eh(w.title)}</option>`).join('')
+    :'<option value="">（無作品）</option>';
+  updateProg();
+}
+function updateProg(){
+  const i=parseInt(document.getElementById('prog-sel').value);
+  const w=ST.works[i];const C=163.4;
+  if(!w||!w.target){document.getElementById('prog-circ').style.strokeDashoffset=C;document.getElementById('prog-pct').textContent='—';return;}
+  const pct=Math.min(100,Math.round((calcWorkWc(w)/w.target)*100));
+  document.getElementById('prog-circ').style.strokeDashoffset=C-(pct/100)*C;
+  document.getElementById('prog-pct').textContent=pct+'%';
+}
+
+function showRptModal(){
+  const ym=TODAY.slice(0,7);
+  const ln=new Date();ln.setMonth(ln.getMonth()-1);
+  const lm=ln.getFullYear()+'/'+p2(ln.getMonth()+1);
+  const sumPfx=p=>Object.entries(ST.dailyWc).filter(([k])=>k.startsWith(p)).reduce((s,[,v])=>s+v,0);
+  const tm=sumPfx(ym),lmv=sumPfx(lm),diff=lmv?Math.round((tm-lmv)/lmv*100):null;
+  let bw='（無）',bwc=0;
+  ST.works.forEach(w=>{const wc=calcWorkWc(w);if(wc>bwc){bwc=wc;bw=w.title;}});
+  const tot=Object.values(ST.dailyWc).reduce((s,v)=>s+v,0);
+  document.getElementById('rpt-grid').innerHTML=`
+    <div class="rpt-c"><div class="rl">本月累積</div><div class="rv">${tm.toLocaleString()}</div><div class="rs2 ${diff===null?'':diff>=0?'up':'dn'}">${diff===null?'初次記錄':(diff>=0?'↑ ':'↓ ')+Math.abs(diff)+'%'}</div></div>
+    <div class="rpt-c"><div class="rl">全部累積</div><div class="rv">${tot.toLocaleString()}</div><div class="rs2" style="color:var(--tx3)">所有日期</div></div>
+    <div class="rpt-c"><div class="rl">最常編輯</div><div class="rv" style="font-size:.76rem">${eh(bw)}</div><div class="rs2" style="color:var(--tx3)">${bwc.toLocaleString()} 字</div></div>
+    <div class="rpt-c"><div class="rl">書籍數量</div><div class="rv">${ST.works.length}</div><div class="rs2" style="color:var(--tx3)">進行中</div></div>`;
+  showModal('modal-rpt');
+}
+
+// ─────────────────────────────────────────────────────────────
+// WORKS
+// ─────────────────────────────────────────────────────────────
+const WORK_TYPES=['小說','散文','新詩','劇本','其他','歷史古風','愛情','社會寫實','驚悚恐怖','懸疑','無限流','一般向','女性向','男性向','未來','科幻','賽博龐克','民國','輕小說'];
+const STATUS_MAP={serial:'連載中',done:'已完結',off:'下架中'};
+const STATUS_CLS={serial:'ws-serial',done:'ws-done',off:'ws-off'};
+
+function renderWorks(){
+  const el=document.getElementById('works-list');
+  if(!ST.works.length){el.innerHTML='<div class="empty-hint">尚無書籍<br>點擊下方按鈕建立你的第一部作品</div>';return;}
+  el.innerHTML=ST.works.map(w=>{
+    const wc=calcWorkWc(w),cc=(w.chapters||[]).length;
+    const cvHtml=w.cover?`<img src="${w.cover}" />`:(w.title.slice(0,3));
+    return`<div class="item-row" onclick="openWorkDetail(${w.id})">
+      <div class="work-cover">${cvHtml}</div>
+      <div class="item-row-l" style="margin-left:4px">
+        <div class="item-title">${eh(w.title)}</div>
+        <div class="item-meta">${(w.types||[]).slice(0,3).join(' · ')}　${cc} 章　${wc.toLocaleString()} 字</div>
+        <span class="work-status ${STATUS_CLS[w.status||'serial']}">${STATUS_MAP[w.status||'serial']}</span>
+      </div>
+      <span class="item-arr">›</span>
+    </div>`;
+  }).join('');
+}
+
+let _nwCoverData=null,_nwEditId=null;
+
+function initWorkTagGrid(){
+  document.getElementById('nw-tags').innerHTML=WORK_TYPES.map(t=>`<span class="tag-opt" onclick="this.classList.toggle('sel')">${t}</span>`).join('');
+}
+function clearCover(){_nwCoverData=null;document.getElementById('cv-preview').style.display='none';}
+function handleCoverUpload(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{
+    _nwCoverData=e.target.result;
+    document.getElementById('cv-img').src=_nwCoverData;
+    document.getElementById('cv-preview').style.display='block';
+  };r.readAsDataURL(f);
+}
+function showNewWorkModal(workId=null){
+  _nwCoverData=null;_nwEditId=null;
+  initWorkTagGrid();
+  document.getElementById('nw-modal-title').textContent=workId?'編輯書籍':'建立新書籍';
+  if(workId){
+    const w=ST.works.find(x=>x.id===workId);if(!w)return;
+    document.getElementById('nw-title').value=w.title;
+    document.getElementById('nw-target').value=w.target||'';
+    document.getElementById('nw-status').value=w.status||'serial';
+    document.querySelectorAll('#nw-tags .tag-opt').forEach(el=>{if((w.types||[]).includes(el.textContent))el.classList.add('sel');});
+    _nwEditId=workId;
+  } else {
+    document.getElementById('nw-title').value='';
+    document.getElementById('nw-target').value='';
+    document.getElementById('nw-status').value='serial';
+  }
+  clearCover();showModal('modal-new-work');
+}
+function saveNewWork(){
+  const t=(document.getElementById('nw-title').value||'').trim();
+  if(!t){showToast('請輸入書籍標題');return;}
+  const types=[...document.querySelectorAll('#nw-tags .tag-opt.sel')].map(el=>el.textContent);
+  const cover=_nwCoverData;
+  if(_nwEditId){
+    const w=ST.works.find(x=>x.id===_nwEditId);
+    if(w){w.title=t;w.target=parseInt(document.getElementById('nw-target').value)||0;w.status=document.getElementById('nw-status').value;w.types=types;if(cover)w.cover=cover;}
+    saveAll();renderWorks();renderProgressSelect();renderSettingsBookSelect();
+    closeModal('modal-new-work');showToast('已更新書籍');
+    if(document.getElementById('work-detail').classList.contains('vis'))document.getElementById('wd-title').textContent=t;
+    return;
+  }
+  const w={id:Date.now(),title:t,target:parseInt(document.getElementById('nw-target').value)||0,
+    status:document.getElementById('nw-status').value,types,cover,chapters:[],volumes:[]};
+  ST.works.push(w);saveAll();renderWorks();renderProgressSelect();renderSettingsBookSelect();
+  closeModal('modal-new-work');showToast('已建立「'+t+'」');
+  openWorkDetail(w.id);
+}
+function editWorkMeta(){if(ST._curWId)showNewWorkModal(ST._curWId);}
+function deleteCurrentWork(){
+  const w=ST.works.find(x=>x.id===ST._curWId);if(!w)return;
+  if(!confirm('確定要刪除「'+w.title+'」？無法復原。'))return;
+  ST.works=ST.works.filter(x=>x.id!==ST._curWId);
+  saveAll();renderWorks();renderProgressSelect();renderSettingsBookSelect();closeWorkDetail();showToast('已刪除書籍');
+}
+
+// ─────────────────────────────────────────────────────────────
+// WORK DETAIL / TOC
+// ─────────────────────────────────────────────────────────────
+ST._curWId=null;
+function openWorkDetail(id){
+  ST._curWId=id;
+  const w=ST.works.find(x=>x.id===id);if(!w)return;
+  document.getElementById('wd-title').textContent=w.title;
+  document.getElementById('work-detail').classList.add('vis');
+  renderTOC(w);
+}
+function closeWorkDetail(){document.getElementById('work-detail').classList.remove('vis');ST._curWId=null;}
+function renderTOC(w){
+  const c=document.getElementById('toc-content');
+  if(!(w.chapters||[]).length&&!(w.volumes||[]).length){c.innerHTML='<div class="empty-hint">尚無章節，點擊上方按鈕新增</div>';return;}
+  let h='';
+  (w.volumes||[]).forEach(vol=>{
+    const vChs=(w.chapters||[]).filter(ch=>ch.volId===vol.id);
+    const vWc=vChs.reduce((s,ch)=>s+cntWords(ST.editorData['ch_'+ch.id]||'','words'),0);
+    h+=`<div class="vol-block" id="vb-${vol.id}">
+      <div class="vol-hdr" onclick="toggleVol(${vol.id})">
+        <span class="vol-dot"></span><span class="vol-name">${eh(vol.name)}</span>
+        <span class="vol-meta">${vChs.length} 章 · ${vWc.toLocaleString()} 字</span>
+        <button onclick="event.stopPropagation();renameVol(${vol.id})" class="btn-icon" style="padding:2px"><svg viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></button>
+        <button onclick="event.stopPropagation();deleteVol(${vol.id})" class="btn-icon" style="padding:2px"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#e08070"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        <span class="vol-chev">▾</span>
+      </div>
+      <div class="vol-chs">`;
+    if(!vChs.length)h+=`<div style="padding:8px 24px;font-size:.66rem;color:var(--tx3)">尚無章節</div>`;
+    else vChs.forEach(ch=>{
+      const wc=cntWords(ST.editorData['ch_'+ch.id]||'','words');
+      h+=`<div class="ch-row" onclick="openChEd(${w.id},${ch.id})">
+        <span class="ch-dot"></span><span class="ch-name">${eh(ch.name)}</span>
+        <span class="ch-wc">${wc>0?wc.toLocaleString()+' 字':''}</span>
+        <button onclick="event.stopPropagation();deleteCh(${ch.id})" class="btn-icon" style="padding:2px"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#e08070"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        <span class="ch-arr">›</span>
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+  (w.chapters||[]).filter(ch=>!ch.volId).forEach(ch=>{
+    const wc=cntWords(ST.editorData['ch_'+ch.id]||'','words');
+    h+=`<div class="sa-ch" onclick="openChEd(${w.id},${ch.id})">
+      <span class="ch-dot"></span><span class="ch-name" style="flex:1">${eh(ch.name)}</span>
+      <span class="ch-wc">${wc>0?wc.toLocaleString()+' 字':''}</span>
+      <button onclick="event.stopPropagation();deleteCh(${ch.id})" class="btn-icon" style="padding:2px"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#e08070"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+      <span class="ch-arr">›</span>
+    </div>`;
+  });
+  c.innerHTML=h;
+}
+function toggleVol(id){document.getElementById('vb-'+id).classList.toggle('coll');}
+function addVol(){document.getElementById('vol-name-inp').value='';showModal('modal-add-vol');}
+function confirmAddVol(){
+  const n=(document.getElementById('vol-name-inp').value||'').trim();if(!n){showToast('請輸入分卷名稱');return;}
+  const w=ST.works.find(x=>x.id===ST._curWId);if(!w)return;
+  w.volumes=w.volumes||[];w.volumes.push({id:Date.now(),name:n});
+  saveAll();renderTOC(w);closeModal('modal-add-vol');showToast('已新增分卷');
+}
+function renameVol(vid){
+  const w=ST.works.find(x=>x.id===ST._curWId);const vol=(w.volumes||[]).find(v=>v.id===vid);if(!vol)return;
+  const n=prompt('分卷名稱：',vol.name);if(n&&n.trim()){vol.name=n.trim();saveAll();renderTOC(w);}
+}
+function deleteVol(vid){
+  const w=ST.works.find(x=>x.id===ST._curWId);if(!w)return;
+  if(!confirm('刪除分卷？其下章節將變為獨立章節。'))return;
+  (w.chapters||[]).forEach(ch=>{if(ch.volId===vid)ch.volId=null;});
+  w.volumes=(w.volumes||[]).filter(v=>v.id!==vid);
+  saveAll();renderTOC(w);showToast('已刪除分卷');
+}
+function addCh(volId){
+  const w=ST.works.find(x=>x.id===ST._curWId);if(!w)return;
+  document.getElementById('ch-name-inp').value='';
+  const sel=document.getElementById('ch-vol-sel');
+  sel.innerHTML='<option value="">（獨立章節）</option>'+(w.volumes||[]).map(v=>`<option value="${v.id}">${eh(v.name)}</option>`).join('');
+  if(volId)sel.value=volId;
+  showModal('modal-add-ch');
+}
+function confirmAddCh(){
+  const n=(document.getElementById('ch-name-inp').value||'').trim();if(!n){showToast('請輸入章節名稱');return;}
+  const w=ST.works.find(x=>x.id===ST._curWId);if(!w)return;
+  const v=document.getElementById('ch-vol-sel').value;
+  const ch={id:Date.now(),name:n,volId:v?parseInt(v):null};
+  w.chapters.push(ch);saveAll();renderTOC(w);closeModal('modal-add-ch');showToast('已新增章節');
+  openChEd(w.id,ch.id);
+}
+function deleteCh(chId){
+  const w=ST.works.find(x=>x.id===ST._curWId);if(!w)return;
+  if(!confirm('確定刪除此章節？內容將一併刪除。'))return;
+  w.chapters=w.chapters.filter(c=>c.id!==chId);
+  delete ST.editorData['ch_'+chId];
+  saveAll();renderTOC(w);showToast('已刪除章節');
+}
+
+// ─────────────────────────────────────────────────────────────
+// EDITOR
+// ─────────────────────────────────────────────────────────────
+let _edCtx=null,_edVersions=[],_edAutoTimer=null,_edLastSaved='',_edDivStyle='whale';
+
+function openChEd(workId,chId){
+  const w=ST.works.find(x=>x.id===workId);const ch=w&&w.chapters.find(c=>c.id===chId);if(!ch)return;
+  _edCtx={type:'chapter',workId,chId};
+  document.getElementById('ed-title').value=ch.name;
+  document.getElementById('ed-ta').value=ST.editorData['ch_'+chId]||'';
+  _edLastSaved=document.getElementById('ed-ta').value;
+  _openEdView();
+}
+function openDiaryEditor(date){
+  const d=date||TODAY;
+  _edCtx={type:'diary',date:d};
+  document.getElementById('ed-title').value='日記 '+d;
+  document.getElementById('ed-ta').value=ST.editorData['diary_'+d]||'';
+  _edLastSaved=document.getElementById('ed-ta').value;
+  _openEdView();
+}
+function openSettingItemEditor(bookId,catKey,idx){
+  const item=((ST.settings[bookId]||{})[catKey]||[])[idx];if(!item)return;
+  _edCtx={type:'setting',bookId,catKey,idx};
+  document.getElementById('ed-title').value=item.title||'';
+  document.getElementById('ed-ta').value=item.content||'';
+  _edLastSaved=document.getElementById('ed-ta').value;
+  _openEdView();
+}
+function _openEdView(){
+  document.getElementById('editor-view').classList.add('vis');
+  setSaveDot(false);startAutoSave();updateEdWc();
+}
+function closeEditor(){
+  // Auto-save on close
+  saveEditor(false);
+  document.getElementById('editor-view').classList.remove('vis');
+  stopAutoSave();
+  renderWorks();
+  const w=ST.works.find(x=>x.id===ST._curWId);if(w)renderTOC(w);
+  renderSettingsBookDetail();
+  renderDiary();
+}
+function startAutoSave(){stopAutoSave();_edAutoTimer=setInterval(()=>saveEditor(false),600000);}
+function stopAutoSave(){if(_edAutoTimer){clearInterval(_edAutoTimer);_edAutoTimer=null;}}
+function setSaveDot(s){document.getElementById('save-dot').className='autosave-dot'+(s?' saved':'');}
+
+function saveEditor(manual=false){
+  const ctx=_edCtx;
+  const title=(document.getElementById('ed-title').value||'').trim();
+  const content=document.getElementById('ed-ta').value;
+  // push version (max 5)
+  if(_edVersions.length>=5)_edVersions.shift();
+  _edVersions.push({ts:new Date().toLocaleString('zh-TW'),content});
+  if(!ctx){setSaveDot(true);if(manual)showToast('已儲存');return;}
+  if(ctx.type==='chapter'){
+    const w=ST.works.find(x=>x.id===ctx.workId);
+    const ch=w&&w.chapters.find(c=>c.id===ctx.chId);
+    if(ch&&title)ch.name=title;
+    ST.editorData['ch_'+ctx.chId]=content;
+    const delta=cntWords(content,'words')-cntWords(_edLastSaved,'words');
+    _edLastSaved=content;if(delta>0)addDailyWc(delta);
+    saveAll();setSaveDot(true);if(manual)showToast('已儲存「'+title+'」');
+  } else if(ctx.type==='setting'){
+    ST.settings[ctx.bookId]=ST.settings[ctx.bookId]||{};
+    ST.settings[ctx.bookId][ctx.catKey]=ST.settings[ctx.bookId][ctx.catKey]||[];
+    const item=ST.settings[ctx.bookId][ctx.catKey][ctx.idx];
+    if(item){item.title=title||item.title;item.content=content;}
+    saveAll();setSaveDot(true);if(manual)showToast('已儲存');
+  } else if(ctx.type==='diary'){
+    ST.editorData['diary_'+ctx.date]=content;
+    const prev=content.replace(/\n/g,' ').slice(0,60);
+    const ex=ST.diary.find(e=>e.date===ctx.date);
+    if(ex)ex.preview=prev;else ST.diary.push({date:ctx.date,preview:prev});
+    const delta=cntWords(content,'words')-cntWords(_edLastSaved,'words');
+    _edLastSaved=content;if(delta>0)addDailyWc(delta);
+    saveAll();setSaveDot(true);if(manual)showToast('已儲存日記');
+  }
+}
+
+function onEdInp(){setSaveDot(false);updateEdWc();}
+function updateEdWc(){
+  document.getElementById('ed-wc').textContent=cntWords(document.getElementById('ed-ta').value,ST.eWcMode).toLocaleString();
+}
+function edUndo(){document.getElementById('ed-ta').focus();document.execCommand('undo');}
+function edRedo(){document.getElementById('ed-ta').focus();document.execCommand('redo');}
+
+function handleEdKey(e){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    const ta=document.getElementById('ed-ta');
+    const s=ta.selectionStart;
+    // insert newline + two fullwidth spaces
+    const ins='\n　　';
+    ta.value=ta.value.slice(0,s)+ins+ta.value.slice(ta.selectionEnd);
+    ta.selectionStart=ta.selectionEnd=s+ins.length;
+    updateEdWc();setSaveDot(false);
+  }
+}
+function insertIndent(){_insAt('　　');}
+function showDivChoice(){showModal('modal-div');}
+function selectDiv(s,el){_edDivStyle=s;document.querySelectorAll('.div-opt').forEach(d=>d.classList.remove('sel'));el.classList.add('sel');}
+function insertDiv(){
+  const icon=_edDivStyle==='whale'?'🐋':'〜';
+  _insAt('\n\n──── '+icon+' ────\n\n');
+  closeModal('modal-div');
+}
+function ins(c){_insAt(c);}
+function insPair(o,cl){
+  const ta=document.getElementById('ed-ta');
+  const s=ta.selectionStart,e2=ta.selectionEnd,sel=ta.value.slice(s,e2);
+  const r=o+sel+cl;
+  ta.value=ta.value.slice(0,s)+r+ta.value.slice(e2);
+  ta.selectionStart=ta.selectionEnd=s+r.length;updateEdWc();
+}
+function _insAt(c){
+  const ta=document.getElementById('ed-ta');const s=ta.selectionStart;
+  ta.value=ta.value.slice(0,s)+c+ta.value.slice(ta.selectionEnd);
+  ta.selectionStart=ta.selectionEnd=s+c.length;updateEdWc();
+}
+function showVersions(){
+  const vl=document.getElementById('ver-list');
+  if(!_edVersions.length){vl.innerHTML='<div style="font-size:.70rem;color:var(--tx3);padding:7px 0">尚無版本記錄</div>';showModal('modal-versions');return;}
+  vl.innerHTML=[..._edVersions].reverse().map((v,i)=>`
+    <div class="ver-item" onclick="restoreVer(${_edVersions.length-1-i})">
+      <div class="ver-time">${v.ts}</div>
+      <div class="ver-prev">${eh(v.content.slice(0,80))}</div>
+      <div class="ver-restore">點擊復原為此版本</div>
+    </div>`).join('');
+  showModal('modal-versions');
+}
+function restoreVer(idx){
+  if(!confirm('確定復原？當前內容將被覆蓋。'))return;
+  document.getElementById('ed-ta').value=_edVersions[idx].content;
+  updateEdWc();setSaveDot(false);closeModal('modal-versions');showToast('已復原版本');
+}
+function showPreview(){
+  const title=document.getElementById('ed-title').value||'預覽';
+  const raw=document.getElementById('ed-ta').value;
+  document.getElementById('prev-title').textContent=title;
+  const html=raw.replace(/──── 🐋 ────/g,'<div class="preview-divider">🐋</div>')
+    .replace(/──── 〜 ────/g,'<div class="preview-divider">〜</div>')
+    .replace(/\n/g,'<br>');
+  document.getElementById('prev-content').innerHTML=html;
+  showModal('modal-preview');
+}
+
+// ─────────────────────────────────────────────────────────────
+// SETTINGS (book-based)
+// ─────────────────────────────────────────────────────────────
+const SET_CATS=['chars','world','plot','inspo','others'];
+const SET_LABELS={chars:'人物設定',world:'背景設定',plot:'情節綱要',inspo:'靈感記錄',others:'其他'};
+ST._curSBId=null;ST._curSCat=null;
+
+function renderSettingsBookSelect(){
+  const sel=document.getElementById('settings-bk-sel');
+  sel.innerHTML='<option value="">請選擇書籍</option>'+ST.works.map(w=>`<option value="${w.id}">${eh(w.title)}</option>`).join('');
+  if(ST._curSBId)sel.value=ST._curSBId;
+  renderSettingsBook();
+}
+function renderSettingsBook(){
+  const bookId=parseInt(document.getElementById('settings-bk-sel').value);
+  const el=document.getElementById('settings-bk-content');
+  if(!bookId){el.innerHTML='';ST._curSBId=null;return;}
+  ST._curSBId=bookId;
+  el.innerHTML=SET_CATS.map(cat=>{
+    const items=((ST.settings[bookId]||{})[cat]||[]);
+    return`<div class="card" style="margin-top:0;margin-bottom:9px" id="sc-${cat}">
+      <div class="card-hdr" onclick="toggleCard('sc-${cat}')"><h2>${SET_LABELS[cat]}</h2><span class="ci">▾</span></div>
+      <div class="card-body">
+        ${items.map((item,i)=>`<div class="item-row" onclick="openSettingCatView(${bookId},'${cat}')">
+          <div class="item-row-l"><div class="item-title">${eh(item.title||'（未命名）')}</div></div>
+          <span class="item-arr">›</span>
+        </div>`).join('')}
+        ${!items.length?'<div class="empty-hint" style="padding:7px 0">尚無記錄</div>':''}
+        <button class="btn-p" onclick="showAddSettingItem(${bookId},'${cat}')">＋ 新增${SET_LABELS[cat]}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openSettingCatView(bookId,cat){
+  ST._curSBId=bookId;ST._curSCat=cat;
+  const w=ST.works.find(x=>x.id===bookId);
+  document.getElementById('sd-title').textContent=(w?w.title+' · ':'')+SET_LABELS[cat];
+  document.getElementById('sd-add-btn').onclick=()=>showAddSettingItem(bookId,cat);
+  document.getElementById('settings-detail').classList.add('vis');
+  renderSettingsBookDetail();
+}
+function renderSettingsBookDetail(){
+  const el=document.getElementById('sd-list');
+  if(!ST._curSBId||!ST._curSCat){el.innerHTML='';return;}
+  const items=((ST.settings[ST._curSBId]||{})[ST._curSCat]||[]);
+  el.innerHTML=items.length?items.map((item,i)=>`
+    <div class="item-row">
+      <div class="item-row-l" onclick="openSettingItemEditor(${ST._curSBId},'${ST._curSCat}',${i})">
+        <div class="item-title">${eh(item.title||'（未命名）')}</div>
+      </div>
+      <button class="btn-danger" style="font-size:.56rem;padding:3px 7px;flex-shrink:0" onclick="deleteSettingItem(${i})">刪除</button>
+      <span class="item-arr" onclick="openSettingItemEditor(${ST._curSBId},'${ST._curSCat}',${i})">›</span>
+    </div>`).join(''):'<div class="empty-hint">尚無記錄</div>';
+}
+function showAddSettingItem(bookId,cat){
+  document.getElementById('si-name').value='';
+  document.getElementById('si-book-id').value=bookId;
+  document.getElementById('si-cat-key').value=cat;
+  document.getElementById('si-modal-title').textContent='新增 '+SET_LABELS[cat];
+  showModal('modal-new-si');
+}
+function confirmNewSI(){
+  const n=(document.getElementById('si-name').value||'').trim();if(!n){showToast('請輸入名稱');return;}
+  const bookId=parseInt(document.getElementById('si-book-id').value);
+  const cat=document.getElementById('si-cat-key').value;
+  ST.settings[bookId]=ST.settings[bookId]||{};
+  ST.settings[bookId][cat]=ST.settings[bookId][cat]||[];
+  const idx=ST.settings[bookId][cat].length;
+  ST.settings[bookId][cat].push({title:n,content:''});
+  saveAll();closeModal('modal-new-si');
+  openSettingItemEditor(bookId,cat,idx);
+}
+function deleteSettingItem(idx){
+  if(!confirm('確定刪除此記錄？'))return;
+  const{bookId,catKey}={bookId:ST._curSBId,catKey:ST._curSCat};
+  (ST.settings[bookId]&&ST.settings[bookId][catKey]||[]).splice(idx,1);
+  saveAll();renderSettingsBookDetail();renderSettingsBook();showToast('已刪除');
+}
+
+// ─────────────────────────────────────────────────────────────
+// SHELF
+// ─────────────────────────────────────────────────────────────
+const SL={unread:'未閱讀',reading:'閱讀中',done:'已完讀',dropped:'未完讀'};
+const SC={unread:'ss-u',reading:'ss-r',done:'ss-d',dropped:'ss-x'};
+ST._shelfFilter='all';ST._curBkId=null;
+
+function setShelfFilter(f,btn){
+  ST._shelfFilter=f;
+  document.querySelectorAll('.shelf-filter-row .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderShelf();
+}
+function renderShelf(){
+  let books=ST._shelfFilter==='all'?ST.shelf:ST.shelf.filter(b=>b.status===ST._shelfFilter);
+  const sorted=[...books].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('shelf-list').innerHTML=sorted.length
+    ?sorted.map(b=>`<div class="book-item" onclick="openBookDetail(${b.id})">
+      <div class="b-cover">${b.title.slice(0,4)}</div>
+      <div class="b-info">
+        <div class="b-name">${eh(b.title)}</div>
+        <div class="b-author">${eh(b.author||'')}</div>
+        <span class="b-status ${SC[b.status]}">${SL[b.status]}</span>
+      </div>
+      <div class="b-date">${b.date||''}</div>
+    </div>`).join('')
+    :'<div class="empty-hint">尚無書籍記錄</div>';
+}
+
+function addShelfBook(){
+  const t=(document.getElementById('nb-title').value||'').trim();
+  if(!t){showToast('請輸入書名');return;}
+  const bk={id:Date.now(),title:t,author:(document.getElementById('nb-author').value||'').trim(),
+    isbn:(document.getElementById('nb-isbn').value||'').trim(),
+    status:document.getElementById('nb-status').value,
+    date:document.getElementById('nb-date').value,summary:'',note:''};
+  ST.shelf.push(bk);saveAll();renderShelf();renderShelfStats();
+  closeModal('modal-new-book');showToast('已加入「'+t+'」');
+}
+function openBookDetail(id){
+  ST._curBkId=id;const b=ST.shelf.find(x=>x.id===id);if(!b)return;
+  document.getElementById('bd-title').textContent=b.title;
+  document.getElementById('bd-body').innerHTML=`
+    <label class="m-lbl">書名</label><input class="m-inp" id="bd-tname" value="${eh(b.title)}"/>
+    <label class="m-lbl">作者</label><input class="m-inp" id="bd-author" value="${eh(b.author||'')}"/>
+    <label class="m-lbl">ISBN</label><input class="m-inp" id="bd-isbn" value="${eh(b.isbn||'')}"/>
+    <label class="m-lbl">閱讀狀態</label>
+    <select class="m-sel" id="bd-status" onchange="autoSyncBookStatus(${id})">
+      <option value="unread"${b.status==='unread'?' selected':''}>未閱讀</option>
+      <option value="reading"${b.status==='reading'?' selected':''}>閱讀中</option>
+      <option value="done"${b.status==='done'?' selected':''}>已完讀</option>
+      <option value="dropped"${b.status==='dropped'?' selected':''}>未完讀</option>
+    </select>
+    <label class="m-lbl">閱讀日期</label><input class="m-inp" type="date" id="bd-date" value="${b.date||''}" onchange="autoSyncBookStatus(${id})"/>
+    <label class="m-lbl">摘要</label><textarea class="m-ta" id="bd-sum" rows="3">${eh(b.summary||'')}</textarea>
+    <label class="m-lbl">心得</label><textarea class="m-ta" id="bd-note" rows="4">${eh(b.note||'')}</textarea>
+    <button class="btn-p" style="margin-top:2px" onclick="saveBookDetail(${id})">儲存</button>`;
+  document.getElementById('book-detail').classList.add('vis');
+}
+function autoSyncBookStatus(id){
+  const b=ST.shelf.find(x=>x.id===id);if(!b)return;
+  b.status=document.getElementById('bd-status').value;
+  b.date=document.getElementById('bd-date').value;
+  saveAll();renderShelf();renderShelfStats();
+}
+function saveBookDetail(id){
+  const b=ST.shelf.find(x=>x.id===id);if(!b)return;
+  b.title=(document.getElementById('bd-tname').value||'').trim()||b.title;
+  b.author=(document.getElementById('bd-author').value||'').trim();
+  b.isbn=(document.getElementById('bd-isbn').value||'').trim();
+  b.status=document.getElementById('bd-status').value;
+  b.date=document.getElementById('bd-date').value;
+  b.summary=document.getElementById('bd-sum').value;
+  b.note=document.getElementById('bd-note').value;
+  saveAll();renderShelf();renderShelfStats();
+  document.getElementById('bd-title').textContent=b.title;
+  showToast('已儲存');
+}
+function deleteCurrentBook(){
+  const b=ST.shelf.find(x=>x.id===ST._curBkId);if(!b)return;
+  if(!confirm('確定刪除「'+b.title+'」？'))return;
+  ST.shelf=ST.shelf.filter(x=>x.id!==ST._curBkId);
+  saveAll();renderShelf();renderShelfStats();closeOV('book-detail');showToast('已刪除書籍');
+}
+
+// ── SHELF STATS: 4 fixed modes ──
+// shelfStatMode: 'curMonth' | 'lastMonth' | 'curYear' | 'lastYear'
+ST.shelfStatMode = ST.shelfStatMode || 'curMonth';
+
+function setShelfStatMode(mode, btn){
+  ST.shelfStatMode = mode;
+  document.querySelectorAll('#shelf-stat-mode-row .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShelfStats();
+}
+
+function _getShelfStatRange(){
+  const now=new Date();
+  const y=now.getFullYear(), m=now.getMonth()+1;
+  if(ST.shelfStatMode==='curMonth')  return {type:'month', y, m};
+  if(ST.shelfStatMode==='lastMonth'){
+    const lm=new Date(y,now.getMonth()-1,1);
+    return {type:'month', y:lm.getFullYear(), m:lm.getMonth()+1};
+  }
+  if(ST.shelfStatMode==='curYear')  return {type:'year', y};
+  if(ST.shelfStatMode==='lastYear') return {type:'year', y:y-1};
+  return {type:'month', y, m};
+}
+
+function renderShelfStats(){
+  const range=_getShelfStatRange();
+  // filter shelf by date range
+  const filtered=ST.shelf.filter(b=>{
+    if(!b.date)return false;
+    const raw=b.date.replace(/-/g,'/');
+    if(range.type==='month'){
+      const yr=parseInt(raw.slice(0,4));
+      const mo=parseInt(raw.split('/')[1]||0);
+      return yr===range.y && mo===range.m;
+    } else {
+      return parseInt(raw.slice(0,4))===range.y;
+    }
+  });
+  const counts={unread:0,reading:0,done:0,dropped:0};
+  filtered.forEach(b=>counts[b.status]=(counts[b.status]||0)+1);
+  const el=document.getElementById('shelf-stat-nums');
+  if(el) el.innerHTML=
+    Object.entries({unread:'未閱讀',reading:'閱讀中',done:'已完讀',dropped:'未完讀'}).map(([k,l])=>
+    `<div class="rs-blk"><div class="rs-num">${counts[k]}</div><div class="rs-unit">本</div><div class="rs-lbl">${l}</div></div>`).join('');
+  // goal circle — always uses full-year done count for current year
+  const goalYr=new Date().getFullYear();
+  const allDone=ST.shelf.filter(b=>{
+    if(!b.date||b.status!=='done')return false;
+    return parseInt(b.date.replace(/-/g,'/').slice(0,4))===goalYr;
+  }).length;
+  const goal=ST.shelfGoal||0;
+  const pct=goal?Math.min(100,Math.round((allDone/goal)*100)):0;
+  const C=213.6;
+  const circEl=document.getElementById('shelf-prog-circ');
+  const pctEl=document.getElementById('shelf-prog-pct');
+  if(circEl) circEl.style.strokeDashoffset=C-(pct/100)*C;
+  if(pctEl)  pctEl.textContent=goal?pct+'%':allDone+'';
+}
+
+// Keep old functions as stubs to avoid reference errors
+function renderYearBtns(){}
+function renderMonthBtns(){}
+function setShelfYear(){}
+function setShelfMonth(){}
+function renderShelfGoalArea(){
+  const el=document.getElementById('shelf-goal-area');
+  if(ST.shelfGoal>0){
+    const canEdit=!ST.goalEdited;
+    el.innerHTML=`<div style="font-size:.62rem;color:var(--tx3);font-family:var(--sans);margin-bottom:5px">年度閱讀目標（作品數）</div>
+      <div style="font-size:1.4rem;color:var(--gold2);font-family:var(--sans);font-weight:600;line-height:1">${ST.shelfGoal}</div>
+      <div style="font-size:.56rem;color:var(--tx3);margin-top:2px;font-family:var(--sans)">作品 / 年</div>
+      ${canEdit?`<button class="btn-sm" style="margin-top:7px" onclick="showModal('modal-goal')">修改目標（剩 1 次）</button>`:`<div style="font-size:.54rem;color:var(--tx3);margin-top:5px;font-family:var(--sans)">目標已鎖定</div>`}`;
+  } else {
+    el.innerHTML=`<div style="font-size:.62rem;color:var(--tx3);font-family:var(--sans);margin-bottom:7px">設定年度閱讀目標</div>
+      <button class="btn-sm" onclick="showModal('modal-goal')">設定目標</button>`;
+  }
+}
+function saveGoal(){
+  const n=parseInt(document.getElementById('goal-inp').value)||0;
+  if(!n){showToast('請輸入目標數量');return;}
+  if(ST.shelfGoal>0)ST.goalEdited=true; // second save locks it
+  ST.shelfGoal=n;
+  saveAll();renderShelfGoalArea();renderShelfStats();
+  closeModal('modal-goal');showToast('目標已設定');
+}
+
+// Daily rec
+const DAILY_RECS=[
+  {title:'《活著》',author:'余華',desc:'以白描手法書寫苦難，訴說生命的韌性，諾貝爾提名作品。'},
+  {title:'《人間詞話》',author:'王國維',desc:'以「境界」論詞，近代文學批評的奠基之作。'},
+  {title:'《存在與時間》',author:'海德格爾',desc:'探討人在世界中的存在本質，哲學史上的里程碑。'},
+  {title:'《挪威的森林》',author:'村上春樹',desc:'細膩描繪青春孤獨、愛與失去，風靡全球的純文學作品。'},
+  {title:'《百年孤獨》',author:'馬奎斯',desc:'魔幻寫實代表作，用一個家族的百年折射人類的命運。'},
+  {title:'《罪與罰》',author:'杜斯妥也夫斯基',desc:'犯罪後的靈魂探索，道德、心理與救贖的深刻刻畫。'},
+  {title:'《鄉土中國》',author:'費孝通',desc:'以「差序格局」解析中國傳統農村社會的經典社會學著作。'},
+];
+function renderRec(){
+  const r=DAILY_RECS[new Date().getDate()%DAILY_RECS.length];
+  document.getElementById('rec-body').innerHTML=`<div class="rec-card">
+    <div class="rec-lbl">每日推薦</div>
+    <div class="rec-title">${r.title}</div>
+    <div class="rec-author">${r.author}</div>
+    <div class="rec-desc">${r.desc}</div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// DIARY
+// ─────────────────────────────────────────────────────────────
+function renderDiary(){
+  document.getElementById('daily-q').textContent=DQ[new Date().getDate()%DQ.length];
+  renderDQList();renderDiaryList();
+}
+function renderDQList(){
+  const q=(document.getElementById('dq-search').value||'').toLowerCase();
+  const entries=Object.entries(ST.dqData).sort((a,b)=>b[0].localeCompare(a[0]));
+  const filtered=q?entries.filter(([k,v])=>k.includes(q)||(v.q||'').includes(q)||(v.a||'').includes(q)):entries;
+  document.getElementById('dq-list').innerHTML=filtered.length?filtered.map(([date,v])=>`
+    <div class="d-entry">
+      <div class="d-entry-hdr">
+        <div class="d-date">${date}</div>
+        <div class="d-entry-acts">
+          <button class="btn-sm" onclick="editDQ('${date}')">編輯</button>
+          <button class="btn-danger" style="font-size:.54rem;padding:2px 7px" onclick="deleteDQ('${date}')">刪除</button>
+        </div>
+      </div>
+      <div class="d-prev" style="font-style:italic;color:var(--tx3)">${eh(v.q)}</div>
+      <div class="d-prev" style="margin-top:2px">${eh((v.a||'').slice(0,80))}</div>
+    </div>`).join('')
+    :'<div style="font-size:.68rem;color:var(--tx3);font-family:var(--sans);padding:5px 0">無記錄</div>';
+}
+function saveDQ(){
+  const ans=(document.getElementById('dq-ans').value||'').trim();if(!ans){showToast('請先填寫答案');return;}
+  ST.dqData[TODAY]={q:document.getElementById('daily-q').textContent,a:ans};
+  saveAll();renderDQList();showToast('已儲存今日問答');
+}
+function editDQ(date){
+  const v=ST.dqData[date];if(!v)return;
+  document.getElementById('edit-dq-date').value=date;
+  document.getElementById('edit-dq-q').value=v.q||'';
+  document.getElementById('edit-dq-a').value=v.a||'';
+  showModal('modal-edit-dq');
+}
+function saveDQEdit(){
+  const date=document.getElementById('edit-dq-date').value;
+  ST.dqData[date]={q:document.getElementById('edit-dq-q').value,a:document.getElementById('edit-dq-a').value};
+  saveAll();renderDQList();closeModal('modal-edit-dq');showToast('已儲存');
+}
+function deleteDQ(date){
+  if(!confirm('確定刪除此問答記錄？'))return;
+  delete ST.dqData[date];saveAll();renderDQList();showToast('已刪除');
+}
+
+function renderDiaryList(){
+  const q=(document.getElementById('diary-search').value||'').toLowerCase();
+  const entries=[...ST.diary].sort((a,b)=>b.date.localeCompare(a.date));
+  const filtered=q?entries.filter(e=>e.date.includes(q)||(e.preview||'').toLowerCase().includes(q)):entries;
+  document.getElementById('diary-list').innerHTML=filtered.length?filtered.map(e=>`
+    <div class="d-entry">
+      <div class="d-entry-hdr">
+        <div class="d-date">${e.date}</div>
+        <div class="d-entry-acts">
+          <button class="btn-sm" onclick="openDiaryEditor('${e.date}')">編輯</button>
+          <button class="btn-danger" style="font-size:.54rem;padding:2px 7px" onclick="deleteDiary('${e.date}')">刪除</button>
+        </div>
+      </div>
+      <div class="d-prev">${eh(e.preview||'')}</div>
+    </div>`).join('')
+    :'<div style="font-size:.68rem;color:var(--tx3);font-family:var(--sans);padding:5px 0">尚無日記記錄</div>';
+}
+function deleteDiary(date){
+  if(!confirm('確定刪除此日記？'))return;
+  ST.diary=ST.diary.filter(e=>e.date!==date);
+  delete ST.editorData['diary_'+date];
+  saveAll();renderDiaryList();showToast('已刪除');
+}
+
+// ─────────────────────────────────────────────────────────────
+// LOGS
+// ─────────────────────────────────────────────────────────────
+const BUILTIN_LOGS=[
+  {v:'v3.0.0',d:'2025-04-22',c:'全面重構：\n• 新增「設定」分頁（個人資訊 / 雲端備份 / 刪除帳號）\n• 書櫃閱讀統計重構：年份與月份分開選擇，0 月＝年度總計\n• 閱讀量目標以年為單位，確認後僅可修改一次\n• 閱讀情形與統計即時同步\n• 書籍詳情移除分類選項\n• 書櫃區塊排序調整：統計 → 列表 → 每日推薦\n• 編輯器退出自動儲存，Enter 自動縮排兩格\n• 移除預設封面選項（僅可上傳圖片）\n• 主題色更新為指定色碼，字色框線全面跟隨\n• 首頁及書櫃統計固定展開\n• 用戶註冊不需密碼，登出自動清空輸入\n• 日記每日問答與日記條目支援編輯與刪除\n• 修正所有頁面底部可捲動至工具列上緣\n• 移除後臺，改為純單機離線模式'},
+  {v:'v2.0.0',d:'2025-04-22',c:'新增用戶系統、背景主題切換、編輯器版本記錄、書籍封面、設定區書籍綁定、書櫃每日推薦與統計圓環圖、日記搜尋功能'},
+  {v:'v1.1.0',d:'2025-04-22',c:'新增書籍分卷功能、目錄視圖、圖標更新'},
+  {v:'v1.0.0',d:'2025-04-22',c:'初始版本發布'},
+];
+function renderLogs(){
+  const extra=LS.get('app_logs')||[];
+  const all=[...extra,...BUILTIN_LOGS];
+  document.getElementById('log-list').innerHTML=all.map(l=>`
+    <div class="log-ent"><span class="log-v">${l.v}</span><span class="log-d">${l.d}</span>
+    <div class="log-c">${l.c.replace(/\n/g,'<br>')}</div></div>`).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
+// BACKUP / EXPORT
+// ─────────────────────────────────────────────────────────────
+function renderBackupWorkSel(){
+  const sel=document.getElementById('backup-work-sel');
+  if(!sel)return;
+  sel.innerHTML=ST.works.length
+    ?ST.works.map(w=>`<option value="${w.id}">${eh(w.title)}</option>`).join('')
+    :'<option value="">（尚無書籍）</option>';
+}
+function exportWork(){
+  const wid=parseInt(document.getElementById('backup-work-sel').value);
+  const fmt=document.getElementById('backup-fmt').value;
+  const w=ST.works.find(x=>x.id===wid);
+  if(!w){showToast('請選擇書籍');return;}
+  // Build text content
+  let txt=w.title+'\n\n';
+  (w.volumes||[]).forEach(vol=>{
+    txt+='【'+vol.name+'】\n\n';
+    (w.chapters||[]).filter(ch=>ch.volId===vol.id).forEach(ch=>{
+      txt+=ch.name+'\n\n'+(ST.editorData['ch_'+ch.id]||'')+'\n\n';
+    });
+  });
+  (w.chapters||[]).filter(ch=>!ch.volId).forEach(ch=>{
+    txt+=ch.name+'\n\n'+(ST.editorData['ch_'+ch.id]||'')+'\n\n';
+  });
+  if(fmt==='docx'){
+    // Simple RTF/HTML disguised as docx note
+    const html='<html><head><meta charset="utf-8"><style>body{font-family:serif;font-size:14pt;line-height:2;}h1{font-size:18pt;}h2{font-size:15pt;}</style></head><body>'+
+      '<h1>'+eh(w.title)+'</h1>'+txt.replace(/\n/g,'<br>').replace(/【(.+?)】/g,'<h2>$1</h2>')+'</body></html>';
+    const blob=new Blob([html],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    _download(blob,w.title+'.docx');
+  } else {
+    const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+    _download(blob,w.title+'.txt');
+  }
+  showToast('已匯出「'+w.title+'」');
+}
+function exportAllWorks(){
+  let txt='';ST.works.forEach(w=>{
+    txt+=w.title+'\n';(w.chapters||[]).forEach(ch=>{txt+=ch.name+'\n'+(ST.editorData['ch_'+ch.id]||'')+'\n\n';});txt+='\n';
+  });
+  _download(new Blob([txt],{type:'text/plain;charset=utf-8'}),'whale-backup.txt');
+  showToast('備份已下載');
+}
+function _download(blob,name){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+function uploadGDrive(){
+  showToast('正在引導授權…請稍候');
+  // Google Drive picker requires OAuth — open Google Drive in new tab as fallback
+  setTimeout(()=>{window.open('https://drive.google.com','_blank');showToast('請手動上傳已下載的備份檔');},600);
+  exportWork();
+}
+
+// ─────────────────────────────────────────────────────────────
+// OV / MODAL
+// ─────────────────────────────────────────────────────────────
+function closeOV(id){document.getElementById(id).classList.remove('vis');}
+function showModal(id){document.getElementById(id).classList.add('vis');}
+function closeModal(id){document.getElementById(id).classList.remove('vis');}
+function closeMOIf(e,id){if(e.target.id===id)closeModal(id);}
+
+// ─────────────────────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+(function init(){
+  initUser();
+  loadUserData();
+  setQuote();
+  renderChart();
+  renderTodayWc();
+  renderProgressSelect();
+  renderRec();
+  renderYearBtns();
+  renderMonthBtns();
+  renderShelfGoalArea();
+  initWorkTagGrid();
+  renderLogs();
+})();
+</script>
+</body>
+</html>
